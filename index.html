@@ -30,9 +30,20 @@
 <h3>
 <a id="background" class="anchor" href="#background" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Background</h3>
 
-<p>(Shakashaka)[<a href="https://en.wikipedia.org/wiki/Shakashaka">https://en.wikipedia.org/wiki/Shakashaka</a>] is a logic puzzle, in which you fill a grid of squares with triangles to form rectangles. It is similar to nonograms in concept, and is known to be NP-complete.</p>
+<p><a href="https://en.wikipedia.org/wiki/Shakashaka">Shakashaka</a> is a logic puzzle, in which you fill a grid of squares with triangles to form rectangles. It is similar to nonograms in concept, and is known to be NP-complete.</p>
 
-<p>JavaScript (Web Workers)[] are stuff that we'll do. yeah.</p>
+<p>JavaScript <a href="https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Using_web_workers">Web Workers</a> are stuff that we'll do. yeah.</p>
+
+<p><code>
+while not_solved and have_branches_to_investigate:
+  branch = get_branch_to_investigate
+  if has_valid_moves(branch)
+    tell_a_worker_to_validate_move</code></p>
+
+<h3>
+<a id="challenges" class="anchor" href="#challenges" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Challenges</h3>
+
+<p>We are traversing a tree of possible grid configurations that spreads exponentially. We will need to figure out an efficient way to distribute the work among the workers (so that as many workers as possible are working at any given time). We also will need to efficiently duplicate data when we're going down multiple branches (for different configurations).</p>
 
       <footer class="site-footer">
         <span class="site-footer-owner"><a href="https://github.com/takumif/shakashaka_solver">Parallelized Shakashaka Solver</a> is maintained by <a href="https://github.com/takumif">takumif</a>.</span>
