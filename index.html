@@ -53,6 +53,27 @@
 
 <p>We are traversing a tree of possible grid configurations that spreads exponentially. We will need to figure out an efficient way to distribute the work among the workers (so that as many workers as possible are working at any given time) while not taking up too much memory. To be efficient with memory, we will need to think of an efficient way to duplicate data when we're going down multiple branches (for different configurations of moves). We will also need to determine what we parallelize across, and the bottleneck of the algorithm.</p>
 
+<h3>
+<a id="resources" class="anchor" href="#resources" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Resources</h3>
+
+<p>We will write the code from scratch. We will refer to <a href="https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Using_web_workers">MDN</a> regarding Web Workers.</p>
+
+<h3>
+<a id="goals-and-deliverables" class="anchor" href="#goals-and-deliverables" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Goals and deliverables</h3>
+
+<p>lol</p>
+
+<h3>
+<a id="platform-of-choice" class="anchor" href="#platform-of-choice" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Platform of choice</h3>
+
+<p>We chose JavaScript for the following reasons:</p>
+
+<ul>
+<li>JavaScript is generally considered "slow", so it has a lot to gain from parallelization</li>
+<li>Having a GUI (HTML page) makes entering and seeing grid configurations easier, which makes our app useful</li>
+<li>We wanted to learn how to use Web Workers</li>
+</ul>
+
       <footer class="site-footer">
         <span class="site-footer-owner"><a href="https://github.com/takumif/shakashaka_solver">Parallelized Shakashaka Solver</a> is maintained by <a href="https://github.com/takumif">takumif</a>.</span>
 
