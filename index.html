@@ -32,14 +32,21 @@
 
 <p><a href="https://en.wikipedia.org/wiki/Shakashaka">Shakashaka</a> is a logic puzzle, in which you fill a grid of squares with triangles to form rectangles. It is similar to nonograms in concept, and is known to be NP-complete. </p>
 
-<h4>
-<a id="rules-of-shakashaka" class="anchor" href="#rules-of-shakashaka" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Rules of Shakashaka　</h4>
+<p>JavaScript <a href="https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Using_web_workers">Web Workers</a> allow us to run multithreaded code in the browser.</p>
+
+<h5>
+<a id="rules-of-shakashaka" class="anchor" href="#rules-of-shakashaka" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Rules of Shakashaka　</h5>
 
 <p><img src="http://1.bp.blogspot.com/-D6Kxz3J51q8/TtpOtaO1KrI/AAAAAAAAATk/u35eNqONGlg/s1600/Shakashaka+Example.png" alt=""></p>
 
-<p>Each white square can be filled by at most one black triangle and each triangle can 4 possible orientations.</p>
+<p>Each white square can be filled by at most one black triangle and each triangle can 4 possible orientations. As for the black squares, the black square with a number on it indicate the number of black triangles that must be adjacent to the black square with the number on it. When I say adjacent, I mean that the black triangle shares a side with the black square with number. For those black squares without any numbers written, any number of black triangles can be adjacent to it. </p>
 
-<p>JavaScript <a href="https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Using_web_workers">Web Workers</a> allow us to run multithreaded code in the browser.</p>
+<p>Now how to win this puzzle, the aim is to add black triangles validly and to form white rectangles such that all white shapes seen are rectangles. (White squares are considered as rectangles if you are unclear.)</p>
+
+<h5>
+<a id="how-do-we-solve-it" class="anchor" href="#how-do-we-solve-it" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>How do we solve it?</h5>
+
+<p>We have a board of a fixed and finite size. We will start filling the empty squares with triangles, and check if we have not reached an invalid configuration (i.e. there are white spaces that cannot form a rectangle). If the configuration is invalid, we will backtrack and try other configurations until a solved configuration appears. Of course, we can improve this algorithm by logically eliminating (and skipping the execution of) some of the configurations that will never lead to a solution. We will parallelize this traversal of the "tree" of configurations by having different workers validating configurations and discovering new potentially valid configurations.</p>
 
 <h3>
 <a id="challenges" class="anchor" href="#challenges" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Challenges</h3>
