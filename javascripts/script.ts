@@ -3,5 +3,6 @@
 /// <reference path="board_io.ts" />
 
 $(() => {
-    drawBoard(initBoard(10, 10));
+    drawBoard(initBoard(10, 10), $(".board"));
+    bindSquares();
 });

@@ -1,16 +1,16 @@
 enum Square {
     Empty,
-    TriTL, // triangle covering the top left corner
-    TriTR,
-    TriBL,
-    TriBR,
-    Dot,
     Black,
     Black0,
     Black1,
     Black2,
     Black3,
-    Black4
+    Black4,
+    Dot,
+    TriTL, // triangle covering the top left corner
+    TriTR,
+    TriBL,
+    TriBR
 }
 
 function initBoard(rows: number, cols: number): Square[][] {
@@ -25,33 +25,28 @@ function initBoard(rows: number, cols: number): Square[][] {
     return board;
 }
 
-function squareToString(type: Square): string {
-    switch (type) {
-        case Square.Empty:
-            return "Empty";
-        case Square.TriTL:
-            return "TriTL";
-        case Square.TriTR:
-            return "TriTR";
-        case Square.TriBL:
-            return "TriBL";
-        case Square.TriBR:
-            return "TriBR";
-        case Square.Dot:
-            return "Dot";
-        case Square.Black:
-            return "Black";
-        case Square.Black0:
-            return "Black0";
-        case Square.Black1:
-            return "Black1";
-        case Square.Black2:
-            return "Black2";
-        case Square.Black3:
-            return "Black3";
-        case Square.Black4:
-            return "Black4";
-        default:
-            throw "Invalid enum value!";
+function getNextSquareType(current: Square): Square {
+    var next = current + 1;
+    if (next in Square) {
+        return next;
+    } else {
+        return 0;
     }
+}
+
+function getPrevSquareType(current: Square): Square {
+    var prev = current - 1;
+    if (prev >= 0) {
+        return prev;
+    } else {
+        return Square.TriBR; // hard-code the last one for now
+    }
+}
+
+function squareToString(type: Square): string {
+    return Square[type];
+}
+
+function stringToSquare(name: string): Square {
+    return Square[name];
 }
