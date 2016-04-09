@@ -48,7 +48,7 @@ function isValidBlock(tl:number, tr:number, bl:number, br:number): boolean {
     
     var angles:Array<number> = new Array<number>();
 
-/********************** CORNER 1 **********************/    
+/****** CORNER 1 *******/    
     // Calc. angles surrounding inner dot.
     var sum1 = 0;
     sum1 += anglesTL[tl];
@@ -57,53 +57,50 @@ function isValidBlock(tl:number, tr:number, bl:number, br:number): boolean {
     // (Not case tri), (triangles in case), (tri in adjacent case)
     if ((tl != Square.TriTR) && (tl == Square.TriTL || tl == Square.TriBL || tl == Square.Dot) && (tr == Square.TriBR || tr == Square.TriTR || tr == Square.Dot)){
         sum1 += anglesTR[tr];
-        //console.log("--1.1--");
+        console.log("--1.1--");
         if ((tr == Square.TriTR || tr == Square.Dot) && (br == Square.TriBL || br == Square.TriBR || br == Square.Dot)){
             sum1 += anglesBR[br];
-           // console.log("--2.1--");
+            console.log("--2.1--");
             if ((br == Square.TriBR || br == Square.Dot) && (bl == Square.TriBL || bl == Square.TriTL || bl == Square.Dot)){
                 sum1 += anglesBL[bl];        
-                //console.log("--3.1--");    
+                console.log("--3.1--");    
             }
         }
        // Initially started with a TL triangle or Dot.
-       if ((tl == Square.TriTL || tl == Square.Dot) && (bl == Square.TriBR || bl == Square.Dot)){
-            //console.log("--4.1--");
+       if ((tl == Square.TriTL || tl == Square.Dot) && (bl == Square.TriBR || bl == Square.Dot || bl == Square.TriBL)){
+            console.log("--4.1--");
             sum1 += anglesBL[bl];
        }
     } 
 
-    //console.log("Clockwise: " + sum1);    
+    console.log("Clockwise: " + sum1);    
 
     var sum2 = 0;
     sum2 += anglesTL[tl];    
     if ((tl != Square.TriBL) && (tl == Square.TriTL || tl == Square.TriTR || tl == Square.Dot) && (bl == Square.TriBL || bl == Square.TriBR || bl == Square.Dot)){
         sum2 += anglesBL[bl];
-        //console.log("--1.2--");
+        console.log("--1.2--");
         if ((bl == Square.TriBL || bl == Square.Dot) && (br == Square.TriBR || br == Square.TriTR || br == Square.Dot)){
             sum2 += anglesBR[br];
-            //console.log("--2.2--");
+            console.log("--2.2--");
             if ((br == Square.TriBR || br == Square.Dot) && (tr == Square.TriTL || tr == Square.TriTR || tr == Square.Dot)){
                 sum2 += anglesTR[tr]; 
-                //console.log("--3.2--");
+                console.log("--3.2--");
             }
         }
         // Initially started with a TL triangle or Dot.
-        if ((tl == Square.TriTL || tl == Square.Dot) && (tr == Square.TriBR || tr == Square.Dot)){
+        if ((tl == Square.TriTL || tl == Square.Dot) && (tr == Square.TriBR || tr == Square.Dot || tr == Square.TriTR)){
             sum2 += anglesTR[tr];
             //console.log("--4.2--");
         }
     }     
     
-    //console.log("Anti-Clockwise: " + sum2);    
+    console.log("Anti-Clockwise: " + sum2);    
 
     // Add the larger angle during rotational travel.
-    if (sum1 > sum2)
-        angles.push(sum1);
-    else 
-        angles.push(sum2);
+    angles.push(max(sum1, sum2));
 
-/********************** END CORNER 1 **********************/    
+/********* END CORNER 1 ********/    
 
     console.log("Final angle: " + angles);
 
@@ -113,6 +110,11 @@ function isValidBlock(tl:number, tr:number, bl:number, br:number): boolean {
     return false;
 }
 
+/************************************** AUX FUNCTIONS ***********************************************/
+
+function max(a:number, b:number): number {
+    return (a > b) ? a : b;   
+}
 
 function withinBounds(b_len: number, row: number, col: number): boolean {
     return (0 <= row && row < b_len) && (0 <= col && col < b_len);   
