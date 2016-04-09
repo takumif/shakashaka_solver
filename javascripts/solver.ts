@@ -263,7 +263,17 @@ function isValidBlock(tl:number, tr:number, bl:number, br:number): boolean {
 
     console.log("All angles : " + angles);
 
-    return false;
+    // Do check for invalid angles.
+    for (var a of angles){
+        // Angle not found in valid angles.
+        if (!(a == 0 || a == 90 || a == 180 || a == 360)){
+            console.log("Invalid");
+            return false;
+        }
+    }
+    
+    // No invalid angle found.
+    return true;
 } /**/
 
 /************************************** AUX FUNCTIONS ***********************************************/
