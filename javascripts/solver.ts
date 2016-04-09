@@ -66,20 +66,22 @@ function isValidBlock(tl:number, tr:number, bl:number, br:number): boolean {
                 console.log("--3.1--");    
             }
         }
-       // Initially started with a TL triangle or Dot.
-       if ((tl == Square.TriTL || tl == Square.Dot) && (bl == Square.TriBR || bl == Square.Dot || bl == Square.TriBL)){
-            console.log("--4.1--");
-            sum1 += anglesBL[bl];
-       }
-       // Entire 2 by 2 is just dot cells.
-       if (tl == Square.Dot && tr == Square.Dot && bl == Square.Dot && br == Square.Dot){
-           sum1 -= 90;
-       }
+        
+        // Initially started with a TL triangle or Dot.
+        if ((sum1 < 360) && (tl == Square.TriTL || tl == Square.Dot) && (bl == Square.TriBR || bl == Square.Dot || bl == Square.TriBL)){
+                console.log("--4.1--");
+                sum1 += anglesBL[bl];
+        }
+    //    // Entire 2 by 2 is just dot cells.
+    //    if (tl == Square.Dot && tr == Square.Dot && bl == Square.Dot && br == Square.Dot){
+    //        sum1 -= 90;
+    //    }
     } 
 
     console.log("Clockwise: " + sum1);    
 
     var sum2 = 0;
+    var repeats = 0;
     sum2 += anglesTL[tl];    
     if ((tl != Square.TriBL) && (tl == Square.TriTL || tl == Square.TriTR || tl == Square.Dot) && (bl == Square.TriBL || bl == Square.TriBR || bl == Square.Dot)){
         sum2 += anglesBL[bl];
@@ -93,14 +95,14 @@ function isValidBlock(tl:number, tr:number, bl:number, br:number): boolean {
             }
         }
         // Initially started with a TL triangle or Dot.
-        if ((tl == Square.TriTL || tl == Square.Dot) && (tr == Square.TriBR || tr == Square.Dot || tr == Square.TriTR)){
+        if ((sum1 < 360) && (tl == Square.TriTL || tl == Square.Dot) && (tr == Square.TriBR || tr == Square.Dot || tr == Square.TriTR)){
             sum2 += anglesTR[tr];
             //console.log("--4.2--");
         }
-       // Entire 2 by 2 is just dot cells.
-       if (tl == Square.Dot && tr == Square.Dot && bl == Square.Dot && br == Square.Dot){
-           sum2 -= 90;
-       }
+    //    // Entire 2 by 2 is just dot cells.
+    //    if (tl == Square.Dot && tr == Square.Dot && bl == Square.Dot && br == Square.Dot){
+    //        sum2 -= 90;
+    //    }
     }     
     
     console.log("Anti-Clockwise: " + sum2);    
@@ -110,7 +112,7 @@ function isValidBlock(tl:number, tr:number, bl:number, br:number): boolean {
 
 /********* END CORNER 1 ********/    
 
-    console.log("Final angle: " + angles);
+    console.log("Corner 1 - Final angle: " + angles);
 
     sum1 = 0;
     sum2 = 0;
