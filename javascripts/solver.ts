@@ -71,6 +71,10 @@ function isValidBlock(tl:number, tr:number, bl:number, br:number): boolean {
             console.log("--4.1--");
             sum1 += anglesBL[bl];
        }
+       // Entire 2 by 2 is just dot cells.
+       if (tl == Square.Dot && tr == Square.Dot && bl == Square.Dot && br == Square.Dot){
+           sum1 -= 90;
+       }
     } 
 
     console.log("Clockwise: " + sum1);    
@@ -93,6 +97,10 @@ function isValidBlock(tl:number, tr:number, bl:number, br:number): boolean {
             sum2 += anglesTR[tr];
             //console.log("--4.2--");
         }
+       // Entire 2 by 2 is just dot cells.
+       if (tl == Square.Dot && tr == Square.Dot && bl == Square.Dot && br == Square.Dot){
+           sum2 -= 90;
+       }
     }     
     
     console.log("Anti-Clockwise: " + sum2);    
