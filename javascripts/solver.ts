@@ -74,7 +74,7 @@ function isValidBlock(tl:number, tr:number, bl:number, br:number): boolean {
         }
     } 
 
-    console.log("Clockwise: " + sum1);    
+    //console.log("Clockwise: " + sum1);    
 
     var sum2 = 0;
     var repeats = 0;
@@ -162,60 +162,106 @@ function isValidBlock(tl:number, tr:number, bl:number, br:number): boolean {
 
 /****** CORNER 3 (BL) *******/    
 
-    // Calc. angles surrounding inner dot.
     var sum1 = 0;
     sum1 += anglesBL[bl];
-    // Only for one angle coming from TL portion.
-    // Sum adjacent angles in clockwise fashion iff tl is top-left or bottom-right triangle.
-    // (Not case tri), (triangles in case), (tri in adjacent case)
     if ((bl != Square.TriTL) && (bl == Square.TriBR || bl == Square.TriBL || bl == Square.Dot) && (tl == Square.TriTR || tl == Square.TriTL || tl == Square.Dot)){
         sum1 += anglesTL[tl];
-        console.log("--1.1--");
+        //console.log("--1.1--");
         if ((tl == Square.TriTL || tl == Square.Dot) && (tr == Square.TriBR || tr == Square.TriTR || tr == Square.Dot)){
             sum1 += anglesTR[tr];
-            console.log("--2.1--");
+            //console.log("--2.1--");
             if ((tr == Square.TriTR || tr == Square.Dot) && (br == Square.TriBR || br == Square.TriBL || br == Square.Dot)){
                 sum1 += anglesBR[br];        
-                console.log("--3.1--");    
+                //console.log("--3.1--");    
             }
         }
-        
         if ((sum1 < 360) && (bl == Square.TriBL || bl == Square.Dot) && (br == Square.TriBR || br == Square.Dot || br == Square.TriTR)){
-                console.log("--4.1--");
+                //console.log("--4.1--");
                 sum1 += anglesBR[br];
         }
     } 
-
-    console.log("Clockwise: " + sum1);    
-
+    //console.log("Clockwise: " + sum1);    
     var sum2 = 0;
     var repeats = 0;
     sum2 += anglesBL[bl];    
     if ((bl != Square.TriBR) && (bl == Square.TriTL || bl == Square.TriBL || bl == Square.Dot) && (br == Square.TriTR || br == Square.TriBR || br == Square.Dot)){
         sum2 += anglesBR[br];
-        console.log("--1.2--");
+        //console.log("--1.2--");
         if ((br == Square.TriBR || br == Square.Dot) && (tr == Square.TriTL || tr == Square.TriTR || tr == Square.Dot)){
             sum2 += anglesTR[tr];
-            console.log("--2.2--");
+            //console.log("--2.2--");
             if ((tr == Square.TriTR || tr == Square.Dot) && (tl == Square.TriTL || tl == Square.TriBL || tl == Square.Dot)){
                 sum2 += anglesTL[tl]; 
-                console.log("--3.2--");
+                //console.log("--3.2--");
             }
         }
         // Initially started with a TL triangle or Dot.
         if ((sum1 < 360) && (bl == Square.TriBL || bl == Square.Dot) && (tl == Square.TriTL || tl == Square.Dot || tl == Square.TriTR)){
             sum2 += anglesTL[tl];
-            console.log("--4.2--");
+           // console.log("--4.2--");
+        }
+    }     
+    //console.log("Anti-Clockwise: " + sum2);    
+    // Add the larger angle during rotational travel.
+    angles.push(max(sum1, sum2));
+   // console.log("Corner 3 - Final angle: " + angles[2]);
+
+/********* END CORNER 3 ********/ 
+
+/****** CORNER 4 (BR) NOTE: I got the directions mixed up but still OK *******/    
+
+    var sum1 = 0;
+    sum1 += anglesBR[br];
+    if ((br != Square.TriTR) && (br == Square.TriBL || br == Square.TriBR || br == Square.Dot) && (tr == Square.TriTR || tr == Square.TriTL || tr == Square.Dot)){
+        sum1 += anglesTR[tr];
+        //console.log("--1.1--");
+        if ((tr == Square.TriTR || tr == Square.Dot) && (tl == Square.TriBL || tl == Square.TriTL || tl == Square.Dot)){
+            sum1 += anglesTL[tl];
+            //console.log("--2.1--");
+            if ((tl == Square.TriTL || tl == Square.Dot) && (bl == Square.TriBR || bl == Square.TriBL || bl == Square.Dot)){
+                sum1 += anglesBL[bl];        
+                //console.log("--3.1--");    
+            }
+        }
+        
+        if ((sum1 < 360) && (br == Square.TriBR || br == Square.Dot) && (bl == Square.TriBL || bl == Square.Dot || bl == Square.TriTL)){
+                //console.log("--4.1--");
+                sum1 += anglesBL[bl];
+        }
+    } 
+
+   // console.log("Anti-Clockwise: " + sum1);    
+
+    var sum2 = 0;
+    var repeats = 0;
+    sum2 += anglesBR[br];    
+    if ((br != Square.TriBL) && (br == Square.TriTR || br == Square.TriBR || br == Square.Dot) && (bl == Square.TriTL || bl == Square.TriBL || bl == Square.Dot)){
+        sum2 += anglesBL[bl];
+        //console.log("--1.2--");
+        if ((bl == Square.TriBL || bl == Square.Dot) && (tl == Square.TriTL || tl == Square.TriTR || tl == Square.Dot)){
+            sum2 += anglesTL[tl];
+           // console.log("--2.2--");
+            if ((tl == Square.TriTL || tl == Square.Dot) && (tr == Square.TriTR || tr == Square.TriBR || tr == Square.Dot)){
+                sum2 += anglesTR[tr]; 
+                //console.log("--3.2--");
+            }
+        }
+        // Initially started with a TL triangle or Dot.
+        if ((sum1 < 360) && (br == Square.TriBR || br == Square.Dot) && (tr == Square.TriTL || tr == Square.Dot || tr == Square.TriTR)){
+            sum2 += anglesTR[tr];
+            //console.log("--4.2--");
         }
     }     
     
-    console.log("Anti-Clockwise: " + sum2);    
+    //console.log("Clockwise: " + sum2);    
 
     // Add the larger angle during rotational travel.
     angles.push(max(sum1, sum2));
-    console.log("Corner 3 - Final angle: " + angles[2]);
+    //console.log("Corner 4 - Final angle: " + angles[3]);
 
-/********* END CORNER 3 ********/ 
+/********* END CORNER 4 ********/ 
+
+    console.log("All angles : " + angles);
 
     return false;
 } /**/
