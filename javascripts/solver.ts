@@ -48,7 +48,7 @@ function isValidBlock(tl:number, tr:number, bl:number, br:number): boolean {
     
     var angles:Array<number> = new Array<number>();
 
-/****** CORNER 1 *******/    
+/****** CORNER 1 (TL) *******/    
     // Calc. angles surrounding inner dot.
     var sum1 = 0;
     sum1 += anglesTL[tl];
@@ -57,25 +57,21 @@ function isValidBlock(tl:number, tr:number, bl:number, br:number): boolean {
     // (Not case tri), (triangles in case), (tri in adjacent case)
     if ((tl != Square.TriTR) && (tl == Square.TriTL || tl == Square.TriBL || tl == Square.Dot) && (tr == Square.TriBR || tr == Square.TriTR || tr == Square.Dot)){
         sum1 += anglesTR[tr];
-        console.log("--1.1--");
+        //console.log("--1.1--");
         if ((tr == Square.TriTR || tr == Square.Dot) && (br == Square.TriBL || br == Square.TriBR || br == Square.Dot)){
             sum1 += anglesBR[br];
-            console.log("--2.1--");
+            //console.log("--2.1--");
             if ((br == Square.TriBR || br == Square.Dot) && (bl == Square.TriBL || bl == Square.TriTL || bl == Square.Dot)){
                 sum1 += anglesBL[bl];        
-                console.log("--3.1--");    
+                //console.log("--3.1--");    
             }
         }
         
         // Initially started with a TL triangle or Dot.
         if ((sum1 < 360) && (tl == Square.TriTL || tl == Square.Dot) && (bl == Square.TriBR || bl == Square.Dot || bl == Square.TriBL)){
-                console.log("--4.1--");
+                //console.log("--4.1--");
                 sum1 += anglesBL[bl];
         }
-    //    // Entire 2 by 2 is just dot cells.
-    //    if (tl == Square.Dot && tr == Square.Dot && bl == Square.Dot && br == Square.Dot){
-    //        sum1 -= 90;
-    //    }
     } 
 
     console.log("Clockwise: " + sum1);    
@@ -85,13 +81,13 @@ function isValidBlock(tl:number, tr:number, bl:number, br:number): boolean {
     sum2 += anglesTL[tl];    
     if ((tl != Square.TriBL) && (tl == Square.TriTL || tl == Square.TriTR || tl == Square.Dot) && (bl == Square.TriBL || bl == Square.TriBR || bl == Square.Dot)){
         sum2 += anglesBL[bl];
-        console.log("--1.2--");
+       // console.log("--1.2--");
         if ((bl == Square.TriBL || bl == Square.Dot) && (br == Square.TriBR || br == Square.TriTR || br == Square.Dot)){
             sum2 += anglesBR[br];
-            console.log("--2.2--");
+            //console.log("--2.2--");
             if ((br == Square.TriBR || br == Square.Dot) && (tr == Square.TriTL || tr == Square.TriTR || tr == Square.Dot)){
                 sum2 += anglesTR[tr]; 
-                console.log("--3.2--");
+                //console.log("--3.2--");
             }
         }
         // Initially started with a TL triangle or Dot.
@@ -99,26 +95,74 @@ function isValidBlock(tl:number, tr:number, bl:number, br:number): boolean {
             sum2 += anglesTR[tr];
             //console.log("--4.2--");
         }
-    //    // Entire 2 by 2 is just dot cells.
-    //    if (tl == Square.Dot && tr == Square.Dot && bl == Square.Dot && br == Square.Dot){
-    //        sum2 -= 90;
-    //    }
+    }     
+    
+    //console.log("Anti-Clockwise: " + sum2);    
+
+    // Add the larger angle during rotational travel.
+    angles.push(max(sum1, sum2));
+    //console.log("Corner 1 - Final angle: " + angles[0]);
+
+/********* END CORNER 1 ********/    
+
+
+/****** CORNER 2 (TR) *******/    
+
+    // Calc. angles surrounding inner dot.
+    sum1 = 0;
+    sum1 += anglesTR[tr];    
+    // (Not case tri), (triangles in case), (tri in adjacent case)
+    if ((tr != Square.TriBR) && (tr == Square.TriTL || tr == Square.TriTR || tr == Square.Dot) && (br == Square.TriBR || br == Square.TriBL || br == Square.Dot)){
+        sum1 += anglesBR[br];
+        console.log("--1.1--");
+        if ((br == Square.TriBR || br == Square.Dot) && (bl == Square.TriBL || bl == Square.TriTL || bl == Square.Dot)){
+            sum1 += anglesBL[bl];
+            console.log("--2.1--");
+            if ((bl == Square.TriBR || bl == Square.Dot) && (tl == Square.TriTL || tl == Square.TriTR || tl == Square.Dot)){
+                sum1 += anglesTL[tl];        
+                console.log("--3.1--");    
+            }
+        }
+        
+        // Initially started with a TL triangle or Dot.
+        if ((sum1 < 360) && (tr == Square.TriTR || tr == Square.Dot) && (tl == Square.TriTL || tl == Square.Dot || tl == Square.TriBL)){
+            console.log("--4.1--");
+            sum1 += anglesTL[tl];
+        }
+    } 
+
+    console.log("Clockwise: " + sum1);    
+
+    sum2 = 0;
+    var repeats = 0;
+    sum2 += anglesTR[tr];    
+    if ((tr != Square.TriTL) && (tr == Square.TriTR || tr == Square.TriBR || tr == Square.Dot) && (tl == Square.TriBL || tl == Square.TriTL || tl == Square.Dot)){
+        sum2 += anglesTL[tl];
+        console.log("--1.2--");
+        if ((tl == Square.TriTL || tl == Square.Dot) && (bl == Square.TriBL || bl == Square.TriBR || bl == Square.Dot)){
+            sum2 += anglesBL[bl];
+            console.log("--2.2--");
+            if ((bl == Square.TriBL || bl == Square.Dot) && (br == Square.TriBR || br == Square.TriTR || br == Square.Dot)){
+                sum2 += anglesBR[br]; 
+                console.log("--3.2--");
+            }
+        }
+        // Initially started with a TL triangle or Dot.
+        if ((sum1 < 360) && (tr == Square.TriTR || tr == Square.Dot) && (br == Square.TriBL || br == Square.Dot || br == Square.TriBR)){
+            sum2 += anglesBR[br];
+            console.log("--4.2--");
+        }
     }     
     
     console.log("Anti-Clockwise: " + sum2);    
 
-    // Add the larger angle during rotational travel.
     angles.push(max(sum1, sum2));
+    console.log("Corner 2 - Final angle: " + angles[1]);
 
-/********* END CORNER 1 ********/    
+/********* END CORNER 2 ********/    
 
-    console.log("Corner 1 - Final angle: " + angles);
-
-    sum1 = 0;
-    sum2 = 0;
-    
     return false;
-}
+} /**/
 
 /************************************** AUX FUNCTIONS ***********************************************/
 
