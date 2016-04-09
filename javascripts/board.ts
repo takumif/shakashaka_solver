@@ -22,6 +22,7 @@ function initBoard(rows: number, cols: number): Square[][] {
             board[r][c] = Square.Empty;
         }
     }
+        
     return board;
 }
 
