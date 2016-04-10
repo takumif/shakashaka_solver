@@ -43,6 +43,10 @@ function isSolved(board: Square[][]): boolean {
             if (col == b_len - 2){
                 if (checkRightSide(TR, BR) == false) return false;
             }
+            // check top side dots.
+            if (row == b_len - 2){
+                if (checkBottomSide(BL, BR) == false) return false;
+            }            
                
         }
     }
@@ -64,7 +68,7 @@ function checkBottomSide(cell1:number, cell2:number):boolean {
             firstAngle += secondAngle;
         }
     } 
-    console.log("firstAngle = " + firstAngle);
+    //console.log("firstAngle = " + firstAngle);
     
     if (!(firstAngle == 0 || firstAngle == 90 || firstAngle == 180 || firstAngle == 360)){
         return false;
@@ -76,7 +80,7 @@ function checkBottomSide(cell1:number, cell2:number):boolean {
             secondAngle += firstAngle;
         }
     }
-    console.log("secondAngle = " + secondAngle);
+    //console.log("secondAngle = " + secondAngle);
 
     if (!(secondAngle == 0 || secondAngle == 90 || secondAngle == 180 || secondAngle == 360)){
         return false;
@@ -95,7 +99,7 @@ function checkRightSide(cell1:number, cell2:number):boolean {
             firstAngle += secondAngle;
         }
     } 
-    console.log("firstAngle = " + firstAngle);
+    //console.log("firstAngle = " + firstAngle);
     
     if (!(firstAngle == 0 || firstAngle == 90 || firstAngle == 180 || firstAngle == 360)){
         return false;
@@ -107,7 +111,7 @@ function checkRightSide(cell1:number, cell2:number):boolean {
             secondAngle += firstAngle;
         }
     }
-    console.log("secondAngle = " + secondAngle);
+    //console.log("secondAngle = " + secondAngle);
 
     if (!(secondAngle == 0 || secondAngle == 90 || secondAngle == 180 || secondAngle == 360)){
         return false;
@@ -126,7 +130,7 @@ function checkLeftSide(cell1:number, cell2:number):boolean {
             firstAngle += secondAngle;
         }
     } 
-    console.log("firstAngle = " + firstAngle);
+    //console.log("firstAngle = " + firstAngle);
     
     if (!(firstAngle == 0 || firstAngle == 90 || firstAngle == 180 || firstAngle == 360)){
         return false;
@@ -138,7 +142,7 @@ function checkLeftSide(cell1:number, cell2:number):boolean {
             secondAngle += firstAngle;
         }
     }
-    console.log("secondAngle = " + secondAngle);
+    //console.log("secondAngle = " + secondAngle);
 
     if (!(secondAngle == 0 || secondAngle == 90 || secondAngle == 180 || secondAngle == 360)){
         return false;
@@ -158,7 +162,7 @@ function checkTopSide(cell1:number, cell2:number):boolean {
             firstAngle += secondAngle;
         }
     } 
-    console.log("firstAngle = " + firstAngle);
+    //console.log("firstAngle = " + firstAngle);
     
     if (!(firstAngle == 0 || firstAngle == 90 || firstAngle == 180 || firstAngle == 360)){
         return false;
@@ -170,7 +174,7 @@ function checkTopSide(cell1:number, cell2:number):boolean {
             secondAngle += firstAngle;
         }
     }
-    console.log("secondAngle = " + secondAngle);
+    //console.log("secondAngle = " + secondAngle);
 
     if (!(secondAngle == 0 || secondAngle == 90 || secondAngle == 180 || secondAngle == 360)){
         return false;
@@ -429,7 +433,7 @@ function isValidBlock(tl:number, tr:number, bl:number, br:number): boolean {
 
     /********* END CORNER 4 ********/ 
 
-    console.log("All angles : " + angles);
+    //console.log("All angles : " + angles);
 
     // Do check for invalid angles.
     for (var a of angles){

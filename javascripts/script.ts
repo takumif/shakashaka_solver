@@ -22,12 +22,21 @@ function runSingleBlockCases(): void{
 $(() => {
     //drawBoard(initBoard(10, 10), $(".board"));
     //bindSquares();    
-    var board = randomBoard(2);
+    //var board = randomBoard(2);
+    
+    var board:Square[][] = [[1,8,9,7,2], [7,10,7,9,7], [8,9,10,7,9], [10,7,9,10,11], [4,10,11,7,1]];
+    
     drawBoard(board, $(".board"));
         
-    if (!checkRightSide(board[0][1], board[1][1])){
-        console.log("invalid left side.");
-    }
+    if (isSolved(board)){
+        console.log("SOLVED!");
+    } else {
+        console.log("Something wrong.");
+    }   
+        
+    // if (!checkBottomSide(board[1][0], board[1][1])){
+    //     console.log("invalid side.");
+    // }
     
     //isValidBlock(board[0][0], board[0][1], board[1][0], board[1][1]);
     //isValidBlock(8, 10, 9, 7);    
