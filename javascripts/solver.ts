@@ -53,6 +53,38 @@ function isSolved(board: Square[][]): boolean {
     return true;
 } /**/
 
+function checkBottomSide(cell1:number, cell2:number):boolean {
+    
+    // NOTE: angle w.r.t. to top centre point.
+    var firstAngle = anglesTL[cell1];
+    var secondAngle = anglesTR[cell2];
+        
+    if ((firstAngle > 0) && (cell1 == Square.TriTL || cell1 == Square.TriBL || cell1 == Square.Dot)){
+        if (cell2 != Square.TriTL){
+            firstAngle += secondAngle;
+        }
+    } 
+    console.log("firstAngle = " + firstAngle);
+    
+    if (!(firstAngle == 0 || firstAngle == 90 || firstAngle == 180 || firstAngle == 360)){
+        return false;
+    } 
+    
+    firstAngle =  anglesTL[cell1];    
+    if ((secondAngle > 0) && (cell2 == Square.TriTR || cell2 == Square.TriBR || cell2 == Square.Dot)){
+        if (cell1 != Square.TriTR){
+            secondAngle += firstAngle;
+        }
+    }
+    console.log("secondAngle = " + secondAngle);
+
+    if (!(secondAngle == 0 || secondAngle == 90 || secondAngle == 180 || secondAngle == 360)){
+        return false;
+    }
+    
+    return true;   
+}
+
 function checkRightSide(cell1:number, cell2:number):boolean {
     
     var firstAngle = anglesTL[cell1];
