@@ -18,10 +18,18 @@ function runSingleBlockCases(): void{
     }
 }
 
+
 $(() => {
-    drawBoard(initBoard(10, 10), $(".board"));
-    bindSquares();    
+    //drawBoard(initBoard(10, 10), $(".board"));
+    //bindSquares();    
+    var board = randomBoard(2);
+    drawBoard(board, $(".board"));
+        
+    if (!checkRightSide(board[0][1], board[1][1])){
+        console.log("invalid left side.");
+    }
     
-    //isValidBlock(7, 9, 11, 10);    
-    runSingleBlockCases();
+    //isValidBlock(board[0][0], board[0][1], board[1][0], board[1][1]);
+    //isValidBlock(8, 10, 9, 7);    
+    //runSingleBlockCases();
 });
