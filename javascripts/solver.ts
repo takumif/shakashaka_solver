@@ -37,6 +37,43 @@ function isSolved(board: Square[][]): boolean {
         }
     }
     
+    // Have invalid corners.
+    if (checkCorners(board) == false) return false;
+    
+    return true;
+}
+
+function checkSide(row:number, col:number):boolean {
+    
+    return true;   
+}
+
+function checkCorners(board: Square[][]):boolean{
+    
+    if (board == null) return false; // Do not entertain bull shit.
+    
+    var b_len = board.length;
+    var topleft = board[0][0];
+    var topright = board[0][b_len - 1];
+    var bottomleft = board[b_len - 1][0];
+    var bottomright = board[b_len - 1][b_len - 1];
+    
+    if (topleft ==  Square.TriTR || topleft == Square.TriBL || topleft == Square.TriBR){
+        return false;
+    }
+    
+    if (topright == Square.TriTL || topright == Square.TriBL || topright == Square.TriBR){
+        return false;
+    }
+    
+    if (bottomleft == Square.TriTL || bottomleft == Square.TriBR || bottomleft == Square.TriTR){
+        return false;
+    }
+    
+    if (bottomright == Square.TriBL || bottomright == Square.TriTL || bottomright == Square.TriTR){
+        return false;
+    }
+    
     return true;
 }
 
@@ -48,7 +85,7 @@ function isValidBlock(tl:number, tr:number, bl:number, br:number): boolean {
     
     var angles:Array<number> = new Array<number>();
 
-/****** CORNER 1 (TL) *******/    
+    /****** CORNER 1 (TL) *******/    
     // Calc. angles surrounding inner dot.
     var sum1 = 0;
     sum1 += anglesTL[tl];
@@ -103,10 +140,10 @@ function isValidBlock(tl:number, tr:number, bl:number, br:number): boolean {
     angles.push(max(sum1, sum2));
     //console.log("Corner 1 - Final angle: " + angles[0]);
 
-/********* END CORNER 1 ********/    
+    /********* END CORNER 1 ********/    
 
 
-/****** CORNER 2 (TR) *******/    
+    /****** CORNER 2 (TR) *******/    
 
     // Calc. angles surrounding inner dot.
     sum1 = 0;
@@ -158,9 +195,9 @@ function isValidBlock(tl:number, tr:number, bl:number, br:number): boolean {
     angles.push(max(sum1, sum2));
     //console.log("Corner 2 - Final angle: " + angles[1]);
 
-/********* END CORNER 2 ********/    
+    /********* END CORNER 2 ********/    
 
-/****** CORNER 3 (BL) *******/    
+    /****** CORNER 3 (BL) *******/    
 
     var sum1 = 0;
     sum1 += anglesBL[bl];
@@ -206,9 +243,9 @@ function isValidBlock(tl:number, tr:number, bl:number, br:number): boolean {
     angles.push(max(sum1, sum2));
    // console.log("Corner 3 - Final angle: " + angles[2]);
 
-/********* END CORNER 3 ********/ 
+    /********* END CORNER 3 ********/ 
 
-/****** CORNER 4 (BR) NOTE: I got the directions mixed up but still OK *******/    
+    /****** CORNER 4 (BR) NOTE: I got the directions mixed up but still OK *******/    
 
     var sum1 = 0;
     sum1 += anglesBR[br];
@@ -259,7 +296,7 @@ function isValidBlock(tl:number, tr:number, bl:number, br:number): boolean {
     angles.push(max(sum1, sum2));
     //console.log("Corner 4 - Final angle: " + angles[3]);
 
-/********* END CORNER 4 ********/ 
+    /********* END CORNER 4 ********/ 
 
     console.log("All angles : " + angles);
 
