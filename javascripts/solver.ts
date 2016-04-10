@@ -4,6 +4,14 @@ interface BlockAngles {
     [type: number]: number;   
 }
 
+/*
+NOTE: One more case to consider.
+
+Black squares with numbers must their corresponding number
+of adjacent black triangles.
+
+*/
+
 // Defines angles for each orientation of triangle within 2 by 2 block.
 // TL TR BR BL DOT , black squares contribute 0 degrees.
 var anglesTL:BlockAngles = {8:90, 9:45, 11:0, 10:45, 7:90, 1:0, 2:0, 3:0, 4:0, 5:0, 6:0}; 
@@ -18,35 +26,41 @@ function isSolved(board: Square[][]): boolean {
     
     var b_len = board.length;
         
-    for (var row = 0; row < b_len - 1; row++) {
-        for (var col = 0; col < b_len - 1; col++) {
+    for (var row = 0; row < b_len; row++) {
+        for (var col = 0; col < b_len; col++) {
             
-            // Triangles and position in 2 by 2.
-            var TL = board[row][col];
-            var TR = board[row][col + 1];
-            var BL = board[row + 1][col];
-            var BR = board[row + 1][col + 1];
+            if ((row < b_len - 1) && (col < b_len - 1)){    
+                // Triangles and position in 2 by 2.
+                var TL = board[row][col];
+                var TR = board[row][col + 1];
+                var BL = board[row + 1][col];
+                var BR = board[row + 1][col + 1];
 
-            // Check 2 by 2 block first.
-            if (!isValidBlock(TL, TR, BL, BR)){
+                // Check 2 by 2 block first.
+                if (!isValidBlock(TL, TR, BL, BR)){
+                    return false;
+                }
+                // check top side dots.
+                if (row == 0){
+                    if (checkTopSide(TL, TR) == false) return false;
+                }
+                // check left side dots.
+                if (col == 0){
+                    if (checkLeftSide(TL, BL) == false) return false;
+                }
+                // check right side dots.
+                if (col == b_len - 2){
+                    if (checkRightSide(TR, BR) == false) return false;
+                }
+                // check top side dots.
+                if (row == b_len - 2){
+                    if (checkBottomSide(BL, BR) == false) return false;
+                }        
+            }
+            // Black squares with numbers.
+            if (checkBlackSquare(row, col, board) == false){
                 return false;
-            }
-            // check top side dots.
-            if (row == 0){
-                if (checkTopSide(TL, TR) == false) return false;
-            }
-            // check left side dots.
-            if (col == 0){
-                if (checkLeftSide(TL, BL) == false) return false;
-            }
-            // check right side dots.
-            if (col == b_len - 2){
-                if (checkRightSide(TR, BR) == false) return false;
-            }
-            // check top side dots.
-            if (row == b_len - 2){
-                if (checkBottomSide(BL, BR) == false) return false;
-            }            
+            }    
                
         }
     }
@@ -56,6 +70,70 @@ function isSolved(board: Square[][]): boolean {
     
     return true;
 } /**/
+
+function checkBlackSquare(row:number, col:number, board:Square[][]):boolean {
+    var type = board[row][col];
+    var b_len = board.length;
+    // Not a black square with number
+    if (type >= Square.Dot || type <= 1){
+        return true; // Do not return any value. No check - no error.
+    }
+    
+    var reqTriangles = 0;
+    
+    switch (type){
+        case Square.Black0:
+            reqTriangles = 0;    
+            break;
+        case Square.Black1:
+            reqTriangles = 1;    
+            break; 
+        case Square.Black2:
+            reqTriangles = 2;    
+            break;
+        case Square.Black3:
+            reqTriangles = 3;    
+            break;
+        case Square.Black4:
+            reqTriangles = 4;    
+            break;                                           
+    }
+    
+    var leftCell = -1;
+    var rightCell = -1;
+    var topCell = -1;
+    var bottomCell = -1;
+
+    // Alll types surrounding cell.
+    if (col >= 0) leftCell = board[row][col - 1];
+    if (col < b_len) rightCell = board[row][col + 1];
+    if (row - 1 >= 0) topCell = board[row - 1][col];
+    if (row + 1 < b_len) bottomCell = board[row + 1][col];
+        
+    var counter = 0;    
+        
+    // Now check up to 4 adjacent cells for black triangles.
+    if ((leftCell != -1) && (leftCell == Square.TriTR || leftCell == Square.TriBR)){
+        counter += 1;
+    }
+    if ((rightCell != -1) && (rightCell == Square.TriBL || rightCell == Square.TriTL)){
+        counter += 1;
+    }
+    if ((topCell != -1) && (topCell == Square.TriBL || leftCell == Square.TriBR)){
+        counter += 1;
+    }   
+    if ((bottomCell != -1) && (bottomCell == Square.TriTL || bottomCell == Square.TriTR)){
+        counter += 1;
+    }
+    
+    
+    // Failed requirement.
+    if (counter != reqTriangles){
+        return false;
+    }
+        
+    return true;
+}
 
 function checkBottomSide(cell1:number, cell2:number):boolean {
     
