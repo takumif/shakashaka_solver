@@ -32,7 +32,14 @@ function isSolved(board: Square[][]): boolean {
                 return false;
             }
             
-            // Check sides and corner dots.
+            // check top side dots.
+            if (row == 0){
+                if (checkTopSide(TL, TR) == false) return false;
+            }
+            // check left side dots.
+            if (col == 0){
+                
+            }
                
         }
     }
@@ -43,7 +50,36 @@ function isSolved(board: Square[][]): boolean {
     return true;
 }
 
-function checkSide(row:number, col:number):boolean {
+
+function checkTopSide(cell1:number, cell2:number):boolean {
+    
+    //var angles:Array<number> = new Array<number>();
+    // NOTE: angle w.r.t. to top centre point.
+    var firstAngle = anglesBL[cell1];
+    var secondAngle = anglesBR[cell2];
+        
+    if ((firstAngle > 0) && (cell1 == Square.TriTL || cell1 == Square.TriBL)){
+        if (cell2 != Square.TriBL){
+            firstAngle += secondAngle;
+        }
+    } 
+    console.log("firstAngle = " + firstAngle);
+    
+    if (!(firstAngle == 0 || firstAngle == 90 || firstAngle == 180 || firstAngle == 360)){
+        return false;
+    } 
+    
+    firstAngle =  anglesBL[cell1];    
+    if ((secondAngle > 0) && (cell2 == Square.TriTR || cell2 == Square.TriBR)){
+        if (cell1 != Square.TriBR){
+            secondAngle += firstAngle;
+        }
+    }
+    console.log("secondAngle = " + secondAngle);
+
+    if (!(secondAngle == 0 || secondAngle == 90 || secondAngle == 180 || secondAngle == 360)){
+        return false;
+    }
     
     return true;   
 }
