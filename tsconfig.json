@@ -9,6 +9,7 @@
         "javascripts/board.ts",
         "javascripts/board_io.ts",
         "javascripts/script.ts",
+        "javascripts/seq_solver.ts",
         "javascripts/solver.ts"
     ]
 }

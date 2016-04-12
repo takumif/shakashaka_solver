@@ -85,3 +85,31 @@ function unsolve(board: Square[][]): Square[][] {
     }
     return newBoard;
 }
+
+/**
+ * Removes the first occurrence of an element in the array, if any.
+ * Returns true if removal happened
+ */
+function remove<T>(arr: T[], element: T): boolean {
+    if (arr.indexOf(element) == -1) {
+        return false;
+    } else {
+        arr.splice(arr.indexOf(element), 1);
+        return true;
+    }
+}
+
+function copyBoard(board: Square[][]): Square[][] {
+    var newBoard: Square[][] = new Array(board.length);
+    for (var row = 0; row < board.length; row++) {
+        newBoard[row] = new Array(board[row].length);
+        for (var col = 0; col < board[row].length; col++) {
+            newBoard[row][col] = board[row][col];
+        }
+    }
+    return newBoard;
+}
+
+function isWithinBounds(board: Square[][], row: number, col: number) {
+    return row >= 0 && row < board.length && col >= 0 && col < board[0].length;
+}
