@@ -68,3 +68,20 @@ function randomBoard(boardLen:number): Square[][] {
     
     return board;
 }
+
+function unsolve(board: Square[][]): Square[][] {
+    var newBoard = new Array(board.length);
+    
+    for (var row = 0; row < board.length; row++) {
+        newBoard[row] = new Array(board[row].length);
+        for (var col = 0; col < board[0].length; col++) {
+            if ([Square.Dot, Square.TriTL, Square.TriTR, Square.TriBL, Square.TriBR
+                ].indexOf(board[row][col]) != -1) {
+                newBoard[row][col] = Square.Empty;
+            } else {
+                newBoard[row][col] = board[row][col];
+            }
+        }
+    }
+    return newBoard;
+}
