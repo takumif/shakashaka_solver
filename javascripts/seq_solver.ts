@@ -59,10 +59,12 @@ function fillDeducibleSquares(board: Square[][]): boolean {
     var progress = false;
     for (var row = 0; row < board.length; row++) {
         for (var col = 0; col < board[0].length; col++) {
-            var square = deduce(board, row, col);
-            if (square != null) {
-                progress = true;
-                board[row][col] = square;
+            if (board[row][col] == Square.Empty) {
+                var square = deduce(board, row, col);
+                if (square != null) {
+                    progress = true;
+                    board[row][col] = square;
+                }
             }
         }
     }
@@ -70,13 +72,12 @@ function fillDeducibleSquares(board: Square[][]): boolean {
 }
 
 /**
- * Returns a Square if its type can be determined based on the surrounding
+ * Returns what should go in a Square if it can be determined based on the surrounding
  * squares; null otherwise
  */
 function deduce(board: Square[][], row: number, col: number): Square {
-    
     var possible = deduceBasedOnAdj(board, row, col);
-    
+    possible = getIntersection(possible, deduceBasedOnNumberedNeighbors(board, row, col));
     return possible.length == 1 ? possible[0] : null;
 }
 
@@ -85,11 +86,72 @@ function deduceBasedOnAdj(board: Square[][], row: number, col: number): Square[]
     
     for (var direction = 0; direction < 4; direction++) {
         if (isDisconnected(board, row, col, direction)) {
-            remove(possible, (direction + 2) % 4);
-            remove(possible, (direction + 3) % 4);
+            remove(possible, getTriangleOfDirection((direction + 2) % 4));
+            remove(possible, getTriangleOfDirection((direction + 3) % 4));
         }
     }
     return possible;
+}
+
+function deduceBasedOnNumberedNeighbors(board: Square[][], row: number, col: number): Square[] {
+    var possible = [Square.TriTR, Square.TriTL, Square.TriBL, Square.TriBR, Square.Dot];
+    for (var direction = 0; direction < 4; direction++) {
+        if (numberedNeighborRequiresDot(board, row, col, direction)) {
+            return [Square.Dot];
+        }
+        if (numberedNeighborRequiresTriangle(board, row, col, direction)) {
+            remove(possible, getTriangleOfDirection((direction + 2) % 4));
+            remove(possible, getTriangleOfDirection((direction + 3) % 4));
+            remove(possible, Square.Dot);
+        }
+    }
+    return possible;
+}
+
+function numberedNeighborRequiresDot(board: Square[][], row: number, col: number, direction: number): boolean {
+    var neighbor = getRowColInDirection(board, row, col, direction);
+    if (neighbor != null && isNumberedSquare(board[neighbor.row][neighbor.col])) {
+        return (countAdjTriangles(board, neighbor.row, neighbor.col) >=
+            getNumberOnSquare(board[neighbor.row][neighbor.col]));
+    } else {
+        return false;
+    }
+}
+
+function numberedNeighborRequiresTriangle(board: Square[][], row: number, col: number, direction: number): boolean {
+    var neighbor = getRowColInDirection(board, row, col, direction);
+    if (neighbor != null && isNumberedSquare(board[neighbor.row][neighbor.col])) {
+        return (countAdjTriangles(board, neighbor.row, neighbor.col) +
+            countAdjEmpty(board, neighbor.row, neighbor.col) <=
+            getNumberOnSquare(board[neighbor.row][neighbor.col]));
+    } else {
+        return false;
+    }
+}
+
+/**
+ * Counts the number of adjacent black triangles that share sides with the square
+ */
+function countAdjTriangles(board: Square[][], row: number, col: number): number {
+    var count = 0;
+    for (var direction = 0; direction < 4; direction++) {
+        var adj = getRowColInDirection(board, row, col, direction);
+        if (adj != null && isBlackAt(board[adj.row][adj.col], (direction + 2) % 4)) {
+            count++;
+        }
+    }
+    return count;
+}
+
+function countAdjEmpty(board: Square[][], row: number, col: number): number {
+    var count = 0;
+    for (var direction = 0; direction < 4; direction++) {
+        var adj = getRowColInDirection(board, row, col, direction);
+        if (adj != null && board[adj.row][adj.col] == Square.Empty) {
+            count++;
+        }
+    }
+    return count;
 }
 
 /**
@@ -108,6 +170,7 @@ function isDisconnected(board: Square[][], row: number, col: number, direction: 
         {row: row, col: col - 1},
         {row: row + 1, col: col},
         {row: row, col: col + 1}][direction];
+        
     if (isWithinBounds(board, adj.row, adj.col)) {
         // Return whether the adjacent square is black on the side it shares with our square
         return isBlackAt(board[adj.row][adj.col], (direction + 2) % 4);

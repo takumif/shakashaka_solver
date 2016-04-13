@@ -99,6 +99,20 @@ function remove<T>(arr: T[], element: T): boolean {
     }
 }
 
+/**
+ * Gets the intersection of two input arrays
+ */
+function getIntersection<T>(arr1: T[], arr2: T[]): T[] {
+    var intersection = [];
+    for (var i = 0; i < arr1.length; i++) {
+        var element = arr1[i];
+        if (arr2.indexOf(element) != -1) {
+            intersection.push(element);
+        }
+    }
+    return intersection;
+}
+
 function copyBoard(board: Square[][]): Square[][] {
     var newBoard: Square[][] = new Array(board.length);
     for (var row = 0; row < board.length; row++) {
@@ -112,4 +126,68 @@ function copyBoard(board: Square[][]): Square[][] {
 
 function isWithinBounds(board: Square[][], row: number, col: number) {
     return row >= 0 && row < board.length && col >= 0 && col < board[0].length;
+}
+
+/**
+ * Returns the statically assigned direction for a triangle tile
+ */
+function getTriangleOfDirection(direction: number): Square {
+    switch (direction) {
+        case 0:
+            return Square.TriTR;
+        case 1:
+            return Square.TriTL;
+        case 2:
+            return Square.TriBL;
+        case 3:
+            return Square.TriBR;
+    }
+}
+
+/**
+ * Returns null if the row or col is out of bounds
+ */
+function getRowColInDirection(board: Square[][], row: number, col: number, direction: number): { row: number, col: number } {
+    var neighbor;
+    switch (direction) {
+        case 0:
+            neighbor = { row: row - 1, col: col };
+        case 1:
+            neighbor = { row: row, col: col - 1 };
+        case 2:
+            neighbor = { row: row + 1, col: col };
+        case 3:
+            neighbor = { row: row, col: col + 1 };
+    }
+    return isWithinBounds(board, neighbor.row, neighbor.col) ? neighbor : null;
+}
+
+function isNumberedSquare(square: Square): boolean {
+    switch (square) {
+        case Square.Black0:
+        case Square.Black1:
+        case Square.Black2:
+        case Square.Black3:
+        case Square.Black4:
+            return true;
+        default:
+            return false;
+    }
+}
+
+function getNumberOnSquare(square: Square): number {
+    switch (square) {
+        case Square.Black0:
+            return 0;
+        case Square.Black1:
+            return 1;
+        case Square.Black2:
+            return 2;
+        case Square.Black3:
+            return 3;
+        case Square.Black4:
+            return 4;
+        default:
+            throw "The square doesn't have a number on it!";
+    }
 }
