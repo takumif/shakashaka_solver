@@ -5,11 +5,7 @@ interface BlockAngles {
 }
 
 /*
-NOTE: One more case to consider.
-
-Black squares with numbers must their corresponding number
-of adjacent black triangles.
-
+    NOTE: board need not be a square.
 */
 
 // Defines angles for each orientation of triangle within 2 by 2 block.
@@ -23,13 +19,14 @@ function isSolved(board: Square[][]): boolean {
     if (hasEmptyCell(board)) {
         return false;
     }
-    
-    var b_len = board.length;
         
-    for (var row = 0; row < b_len; row++) {
-        for (var col = 0; col < b_len; col++) {
+    var numRows = board.length;
+    var numCols = board[0].length;
+        
+    for (var row = 0; row < numRows; row++) {
+        for (var col = 0; col <numCols; col++) {
             
-            if ((row < b_len - 1) && (col < b_len - 1)){    
+            if ((row < numRows - 1) && (col < numCols - 1)){    
                 // Triangles and position in 2 by 2.
                 var TL = board[row][col];
                 var TR = board[row][col + 1];
@@ -49,11 +46,11 @@ function isSolved(board: Square[][]): boolean {
                     if (checkLeftSide(TL, BL) == false) return false;
                 }
                 // check right side dots.
-                if (col == b_len - 2){
+                if (col == numCols - 2){
                     if (checkRightSide(TR, BR) == false) return false;
                 }
                 // check top side dots.
-                if (row == b_len - 2){
+                if (row == numRows - 2){
                     if (checkBottomSide(BL, BR) == false) return false;
                 }        
             }
@@ -65,7 +62,7 @@ function isSolved(board: Square[][]): boolean {
         }
     }
     
-    // Have invalid corners.
+    // Check invalid corners.
     if (checkCorners(board) == false) return false;
     
     return true;
@@ -73,42 +70,28 @@ function isSolved(board: Square[][]): boolean {
 
 function checkBlackSquare(row:number, col:number, board:Square[][]):boolean {
     var type = board[row][col];
-    var b_len = board.length;
+    //var b_len = board.length;
+        
+    var numRows = board.length;
+    var numCols = board[0].length;
+    
     // Not a black square with number
     if (type >= Square.Dot || type <= 1){
         return true; // Do not return any value. No check - no error.
     }
-    
-    var reqTriangles = 0;
-    
-    switch (type){
-        case Square.Black0:
-            reqTriangles = 0;    
-            break;
-        case Square.Black1:
-            reqTriangles = 1;    
-            break; 
-        case Square.Black2:
-            reqTriangles = 2;    
-            break;
-        case Square.Black3:
-            reqTriangles = 3;    
-            break;
-        case Square.Black4:
-            reqTriangles = 4;    
-            break;                                           
-    }
+
+    var reqTriangles = blackSqNum(type);
     
     var leftCell = -1;
     var rightCell = -1;
     var topCell = -1;
     var bottomCell = -1;
 
-    // Alll types surrounding cell.
+    // All types surrounding cell.
     if (col >= 0) leftCell = board[row][col - 1];
-    if (col < b_len) rightCell = board[row][col + 1];
+    if (col < numCols) rightCell = board[row][col + 1];
     if (row - 1 >= 0) topCell = board[row - 1][col];
-    if (row + 1 < b_len) bottomCell = board[row + 1][col];
+    if (row + 1 < numRows) bottomCell = board[row + 1][col];
         
     var counter = 0;    
         
@@ -124,8 +107,7 @@ function checkBlackSquare(row:number, col:number, board:Square[][]):boolean {
     }   
     if ((bottomCell != -1) && (bottomCell == Square.TriTL || bottomCell == Square.TriTR)){
         counter += 1;
-    }
-    
+    }    
     
     // Failed requirement.
     if (counter != reqTriangles){
@@ -148,9 +130,7 @@ function checkBottomSide(cell1:number, cell2:number):boolean {
     } 
     //console.log("firstAngle = " + firstAngle);
     
-    if (!(firstAngle == 0 || firstAngle == 90 || firstAngle == 180 || firstAngle == 360)){
-        return false;
-    } 
+    if (!isValidAngle(firstAngle)) return false;
     
     firstAngle =  anglesTL[cell1];    
     if ((secondAngle > 0) && (cell2 == Square.TriTR || cell2 == Square.TriBR || cell2 == Square.Dot)){
@@ -159,12 +139,7 @@ function checkBottomSide(cell1:number, cell2:number):boolean {
         }
     }
     //console.log("secondAngle = " + secondAngle);
-
-    if (!(secondAngle == 0 || secondAngle == 90 || secondAngle == 180 || secondAngle == 360)){
-        return false;
-    }
-    
-    return true;   
+    return isValidAngle(secondAngle);  
 }
 
 function checkRightSide(cell1:number, cell2:number):boolean {
@@ -179,10 +154,8 @@ function checkRightSide(cell1:number, cell2:number):boolean {
     } 
     //console.log("firstAngle = " + firstAngle);
     
-    if (!(firstAngle == 0 || firstAngle == 90 || firstAngle == 180 || firstAngle == 360)){
-        return false;
-    } 
-    
+    if (!isValidAngle(firstAngle)) return false;
+
     firstAngle =  anglesTL[cell1]; // <-------   
     if ((secondAngle > 0) && (cell2 == Square.TriBR || cell2 == Square.TriBL || cell2 == Square.Dot)){
         if (cell1 != Square.TriBR){
@@ -190,12 +163,7 @@ function checkRightSide(cell1:number, cell2:number):boolean {
         }
     }
     //console.log("secondAngle = " + secondAngle);
-
-    if (!(secondAngle == 0 || secondAngle == 90 || secondAngle == 180 || secondAngle == 360)){
-        return false;
-    }
-    
-    return true;
+    return isValidAngle(secondAngle);  
 }
 
 function checkLeftSide(cell1:number, cell2:number):boolean {
@@ -210,9 +178,7 @@ function checkLeftSide(cell1:number, cell2:number):boolean {
     } 
     //console.log("firstAngle = " + firstAngle);
     
-    if (!(firstAngle == 0 || firstAngle == 90 || firstAngle == 180 || firstAngle == 360)){
-        return false;
-    } 
+    if (!isValidAngle(firstAngle)) return false;
     
     firstAngle =  anglesTR[cell1]; // <-------   
     if ((secondAngle > 0) && (cell2 == Square.TriBR || cell2 == Square.TriBL || cell2 == Square.Dot)){
@@ -222,11 +188,7 @@ function checkLeftSide(cell1:number, cell2:number):boolean {
     }
     //console.log("secondAngle = " + secondAngle);
 
-    if (!(secondAngle == 0 || secondAngle == 90 || secondAngle == 180 || secondAngle == 360)){
-        return false;
-    }
-    
-    return true;
+    return isValidAngle(secondAngle);  
 }
 
 function checkTopSide(cell1:number, cell2:number):boolean {
@@ -242,10 +204,8 @@ function checkTopSide(cell1:number, cell2:number):boolean {
     } 
     //console.log("firstAngle = " + firstAngle);
     
-    if (!(firstAngle == 0 || firstAngle == 90 || firstAngle == 180 || firstAngle == 360)){
-        return false;
-    } 
-    
+    if (!isValidAngle(firstAngle)) return false;
+
     firstAngle =  anglesBL[cell1];    
     if ((secondAngle > 0) && (cell2 == Square.TriTR || cell2 == Square.TriBR || cell2 == Square.Dot)){
         if (cell1 != Square.TriBR){
@@ -253,23 +213,22 @@ function checkTopSide(cell1:number, cell2:number):boolean {
         }
     }
     //console.log("secondAngle = " + secondAngle);
-
-    if (!(secondAngle == 0 || secondAngle == 90 || secondAngle == 180 || secondAngle == 360)){
-        return false;
-    }
     
-    return true;   
+    return isValidAngle(secondAngle);   
 }
 
 function checkCorners(board: Square[][]):boolean{
     
     if (board == null) return false; // Do not entertain bull shit.
     
-    var b_len = board.length;
+    // var b_len = board.length;
+    var numRows = board.length;
+    var numCols = board[0].length;
+    
     var topleft = board[0][0];
-    var topright = board[0][b_len - 1];
-    var bottomleft = board[b_len - 1][0];
-    var bottomright = board[b_len - 1][b_len - 1];
+    var topright = board[0][numCols - 1];
+    var bottomleft = board[numRows - 1][0];
+    var bottomright = board[numRows - 1][numCols - 1];
     
     if (topleft ==  Square.TriTR || topleft == Square.TriBL || topleft == Square.TriBR){
         return false;
@@ -545,4 +504,35 @@ function hasEmptyCell(board: Square[][]): boolean {
         }
     }
     return false;
+}
+
+function isValidAngle(angle:number): boolean{
+    if (!(angle == 0 || angle == 90 || angle == 180 || angle == 360)){
+        return false;
+    }    
+    return true;
+}
+
+function blackSqNum(cell:Square): number{
+    
+    var reqTriangles = 0;
+    
+    switch (cell){
+        case Square.Black0:
+            reqTriangles = 0;    
+            break;
+        case Square.Black1:
+            reqTriangles = 1;    
+            break; 
+        case Square.Black2:
+            reqTriangles = 2;    
+            break;
+        case Square.Black3:
+            reqTriangles = 3;    
+            break;
+        case Square.Black4:
+            reqTriangles = 4;    
+            break;                                           
+    }
+    return reqTriangles;
 }
