@@ -485,6 +485,110 @@ function isValidBlock(tl:number, tr:number, bl:number, br:number): boolean {
     return true;
 } /**/
 
+function validBlock(cellTypes:Square[]): boolean{
+    // Changes to  tl, tr, br, bl to follow clockwise direction!!!
+    var angles:number[] = [0,0,0,0];
+    var cellInd = 0; 
+    var index = 0;
+                                         
+    while (cellInd < cellTypes.length){
+        
+        var currCell = cellTypes[cellInd];
+        var nextInd = (cellInd + 1) % 4;
+        var nextCell = cellTypes[nextInd];
+        
+        angles[index] += getAngle(cellInd, currCell);   
+        
+        if (currAccessible(cellInd, currCell) || !nextAccessible(nextInd, nextCell)){
+            index = (index + 1) % 4;
+        } 
+        
+        cellInd++;           
+    }
+    
+    // Whether to add angle in TL corner one more time.
+    if (nextAccessible(0, cellTypes[0]) && !currAccessible(3, cellTypes[3])){
+       // Don't double add.
+       if (index != 0)
+            angles[index] += getAngle(0, cellTypes[0]);         
+    }    
+
+    console.log(angles);
+
+    for (var ang of angles){
+        console.log(ang);
+        if (!isValidAngle(ang)){
+            return false;
+        }
+    }
+    
+    return true;
+}
+
+function currAccessible(corner:number, curr:Square):boolean{
+    
+    var outcome = false;
+        
+    // Prev not accessible triangles.
+    switch(corner){
+        case 0:
+            outcome = (curr == Square.TriBR || curr == Square.TriTR); 
+            break; 
+        case 1:
+            outcome = (curr == Square.TriBR || curr == Square.TriBL); 
+            break; 
+        case 2:
+            outcome = (curr == Square.TriBL || curr == Square.TriTL); 
+            break; 
+        case 3:
+            outcome = (curr == Square.TriTL || curr == Square.TriTR); 
+            break;
+        default:
+            outcome = false;                         
+    }    
+    return outcome;
+}
+
+// clockwise
+function nextAccessible(corner:number, next:Square):boolean{
+    var outcome = false;
+    
+    if (next == Square.Dot) return true;
+    
+    switch(corner){
+        case 0:
+            outcome = (next == Square.TriTL || next == Square.TriTR); 
+            break; 
+        case 1:
+            outcome = (next == Square.TriBR || next == Square.TriTR); 
+            break; 
+        case 2:
+            outcome = (next == Square.TriBL || next == Square.TriBR); 
+            break; 
+        case 3:
+            outcome = (next == Square.TriTL || next == Square.TriBL); 
+            break;
+        default:
+            outcome = false;                         
+    }
+    return outcome;
+}
+
+function getAngle(index:number, type:Square):number{
+    switch (index){
+        case 0:
+            return anglesTL[type];
+        case 1:
+            return anglesTR[type];
+        case 2:
+            return anglesBR[type];
+        case 3:
+            return anglesBL[type];
+        default:
+            return 0;                                    
+    }
+}
+
 /************************************** AUX FUNCTIONS ***********************************************/
 
 function max(a:number, b:number): number {
