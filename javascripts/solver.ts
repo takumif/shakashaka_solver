@@ -556,6 +556,7 @@ function validBlock(cellTypes:Square[]): boolean{
     return true;
 }
 
+
 function currAccessible(corner:number, curr:Square):boolean{
     
     var outcome = false;
