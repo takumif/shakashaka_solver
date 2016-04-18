@@ -23,6 +23,15 @@
 <a id="project-checkpoint" class="anchor" href="#project-checkpoint" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Project Checkpoint</h2>
 
 <h3>
+<a id="what-we-have-done-so-far" class="anchor" href="#what-we-have-done-so-far" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>What we have done so far</h3>
+
+<p>We have implemented the sequential Shakashaka solver in Typescript. There are two main parts in this sequential implementation: one is the brute-force solver which takes a valid board and guesses a solution for the board. The second part is a checker that takes a given board and determines if the configuration is an actual solution for that board.</p>
+
+<p>For the brute-force solver, takes an initial configuration and first fills all deducible squares (those numbered black squares). Next, for each square, the solver will guess a triangle or blank square to be placed on that square. After that, the solver will pass that new configuration (with the new modified square) and use the checker to verify if it is a solution to the initial board. Otherwise, repeat the process again. In this way, you can imagine a tree of possible configurations at each node (exponential number of configurations) to be checked. Once a valid configuration is reached, the process stops and the solver returns true.</p>
+
+<p>For the checker, the program iterates over each square and checks the sides, corners and inner angles for valid angles that can appear in a solved board. So for any solved board with rectangles, eg. a N * N board, has (N + 1) * (N + 1) dots where angles can be formed around the dot based on the square type. For black, empty and Dot squares, they contribute 0 degrees to the dot. For the triangles, it depends how they are oriented around the centre dot in the 2*2 sub-square. The angles for each orientation are stored in a dictionary. There can be at most 4 angles around any dot and 0,90,180,360 are the only valid angles that can appear in a solved board. So simply, the program calculates the angle contributes for each centre dot of each 2 * 2 sub-square and determines if the sub-square is valid. If no errors are found, the checker says the board configuration is a valid solution.</p>
+
+<h3>
 <a id="revised-schedule" class="anchor" href="#revised-schedule" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Revised Schedule</h3>
 
 <ul>
@@ -38,7 +47,7 @@
 <h3>
 <a id="goals-and-deliverables" class="anchor" href="#goals-and-deliverables" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Goals and Deliverables</h3>
 
-<p>Since we currently don't have a working parallel implementation yet, our evaluation of how achievable the goals listed below are hasn't changed. However, since our sequential implementation is slower than we had anticipated, unless we make great improvements to its algorithm, the size limit of the boards that we can practically solve will be smaller than anticipated. Our plans for the demo haven't changed since the proposal. So far we haven't hit a roadblock that we don't know how to surmount, other than the fact that our sequential implementation is slower than we'd like.</p>
+<p>We are slightly behind schedule, since we originally expected to have started working on the parallel implementation at this point. This is partially due to the fact that we didn't initially allocate time to implement the UI. Since we currently don't have a working parallel implementation yet, our evaluation of how achievable the goals listed below are hasn't changed. However, since our sequential implementation is slower than we had anticipated, unless we make great improvements to its algorithm, the size limit of the boards that we can practically solve will be smaller than anticipated. Our plans for the demo haven't changed since the proposal. So far we haven't hit a roadblock that we don't know how to surmount, other than the fact that our sequential implementation is slower than we'd like.</p>
 
 <h2>
 <a id="project-proposal" class="anchor" href="#project-proposal" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Project Proposal</h2>
