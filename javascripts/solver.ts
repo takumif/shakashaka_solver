@@ -545,25 +545,7 @@ function validBlock(cellTypes:Square[]): boolean{
         counter++;           
     }   
 
-    //console.log(angles);
-
-    for (var ang of angles){
-        
-        angles[index] += getAngle(cellInd, currCell);   
-        
-        if (currAccessible(cellInd, currCell) || !nextAccessible(nextInd, nextCell)){
-            index = (index + 1) % 4;
-        } 
-        
-        cellInd++;           
-    }
-    
-    // Whether to add angle in TL corner one more time.
-    if (nextAccessible(0, cellTypes[0]) && !currAccessible(3, cellTypes[3])){
-       // Don't double add.
-       if (index != 0)
-            angles[index] += getAngle(0, cellTypes[0]);         
-    }    
+    //console.log(angles);  
 
     console.log(angles);
 
