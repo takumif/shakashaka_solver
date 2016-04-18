@@ -500,7 +500,7 @@ function validBlock(cellTypes:Square[]): boolean{
     
     // Clockwise direction. 
     while (counter < (cellTypes.length + 2)){
-        
+
         var currCell = cellTypes[cellInd];
         var nextInd = (cellInd + 1) % 4;
         var nextCell = cellTypes[nextInd];
@@ -548,6 +548,26 @@ function validBlock(cellTypes:Square[]): boolean{
     //console.log(angles);
 
     for (var ang of angles){
+        
+        angles[index] += getAngle(cellInd, currCell);   
+        
+        if (currAccessible(cellInd, currCell) || !nextAccessible(nextInd, nextCell)){
+            index = (index + 1) % 4;
+        } 
+        
+        cellInd++;           
+    }
+    
+    // Whether to add angle in TL corner one more time.
+    if (nextAccessible(0, cellTypes[0]) && !currAccessible(3, cellTypes[3])){
+       // Don't double add.
+       if (index != 0)
+            angles[index] += getAngle(0, cellTypes[0]);         
+    }    
+
+    console.log(angles);
+
+    for (var ang of angles){
         if (!isValidAngle(ang)){
             return false;
         }
@@ -562,7 +582,7 @@ function currAccessible(corner:number, curr:Square):boolean{
     var outcome = false;
     
     if (curr < Square.Dot) return true;    
-        
+
     // Prev not accessible triangles.
     switch(corner){
         case 0:
