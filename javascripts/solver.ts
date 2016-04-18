@@ -545,7 +545,7 @@ function validBlock(cellTypes:Square[]): boolean{
         counter++;           
     }   
 
-    console.log(angles);
+    //console.log(angles);
 
     for (var ang of angles){
         if (!isValidAngle(ang)){
