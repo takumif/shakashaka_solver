@@ -8,8 +8,10 @@
     "files": [
         "javascripts/board.ts",
         "javascripts/board_io.ts",
+        "javascripts/par_solver.ts",
         "javascripts/script.ts",
         "javascripts/seq_solver.ts",
-        "javascripts/solver.ts"
+        "javascripts/solver.ts",
+        "tests/seq_solver_tests.ts"
     ]
 }
