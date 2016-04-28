@@ -11,6 +11,65 @@ var anglesTR:BlockAngles = {8:45, 9:90, 11:45, 10:0, 7:90, 1:0, 2:0, 3:0, 4:0, 5
 var anglesBL:BlockAngles = {8:45, 9:0, 11:45, 10:90, 7:90, 1:0, 2:0, 3:0, 4:0, 5:0, 6:0}; 
 var anglesBR:BlockAngles = {8:0, 9:45, 11:90, 10:45, 7:90, 1:0, 2:0, 3:0, 4:0, 5:0, 6:0}; 
 
+function mayBeSolvable(board:Square[][]):boolean {
+    
+    // Empty board is may be solvable.
+    
+    var numRows = board.length;
+    var numCols = board[0].length;
+        
+    for (var row = 0; row < numRows; row++) {
+        for (var col = 0; col <numCols; col++) {
+            
+            if ((row < numRows - 1) && (col < numCols - 1)){    
+                // Triangles and position in 2 by 2.
+                var TL = board[row][col];
+                var TR = board[row][col + 1];
+                var BL = board[row + 1][col];
+                var BR = board[row + 1][col + 1];
+                
+                
+                // Any 45 degree angle implies no chance of solving.
+                
+                
+                
+                // check top side dots.
+                if (row == 0){
+                    if (checkTopSide(TL, TR, maybeValidAngle) == false) return false;
+                }
+                // check left side dots.
+                if (col == 0){
+                    if (checkLeftSide(TL, BL, maybeValidAngle) == false) return false;
+                }
+                // check right side dots.
+                if (col == numCols - 2){
+                    if (checkRightSide(TR, BR, maybeValidAngle) == false) return false;
+                }
+                // check top side dots.
+                if (row == numRows - 2){
+                    if (checkBottomSide(BL, BR, maybeValidAngle) == false) return false;
+                }        
+            }
+            
+            // Black squares with numbers.
+            if (checkBlackSquare(row, col, board) == false){
+                return false;
+            }    
+               
+        }
+    }
+   
+    // Corner cases that can never be solved.
+    if (!checkCorners(board)) return false;
+     
+    return true;
+}
+
+function innerAngleIsMaybe(board:Square[][]):boolean {
+    return true;
+}
+
+/**************/
 
 function isSolved(board: Square[][]): boolean {
     if (hasEmptyCell(board)) {
@@ -115,7 +174,7 @@ function validBlock(cellTypes:Square[]): boolean{
             }
         }               
         
-        console.log("index = " + index + " ang = " + angles[index] + " cellInd = " + cellInd + " currCell = " + currCell);        
+        //console.log("index = " + index + " ang = " + angles[index] + " cellInd = " + cellInd + " currCell = " + currCell);        
                 
         if (currAccessible(cellInd, currCell) || !nextAccessible(nextInd, nextCell)){
             index = (index + 1) % 4;
@@ -126,8 +185,6 @@ function validBlock(cellTypes:Square[]): boolean{
     }   
 
     //console.log(angles);  
-
-    console.log(angles);
 
     for (var ang of angles){
         if (!isValidAngle(ang)){
