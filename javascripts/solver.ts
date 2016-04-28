@@ -30,8 +30,7 @@ function mayBeSolvable(board:Square[][]):boolean {
                 
                 
                 // Any 45 degree angle implies no chance of solving.
-                
-                
+                                
                 
                 // check top side dots.
                 if (row == 0){
@@ -66,6 +65,7 @@ function mayBeSolvable(board:Square[][]):boolean {
 }
 
 function innerAngleIsMaybe(board:Square[][]):boolean {
+    
     return true;
 }
 
@@ -88,14 +88,8 @@ function isSolved(board: Square[][]): boolean {
                 var TR = board[row][col + 1];
                 var BL = board[row + 1][col];
                 var BR = board[row + 1][col + 1];
-
-                // Check 2 by 2 block first.
-                // if (!isValidBlock(TL, TR, BL, BR)){
-                //     return false;
-                // }
                 
                 if (!validBlock([TL,TR, BR, BL])){
-                    //console.log("At ("+row + "," + col + ")");
                     return false;
                 }
                 
@@ -495,5 +489,5 @@ function blackSqNum(cell:Square): number{
 }
 
 function maybeValidAngle(angle:number):boolean {
-    return (angle > 45);
+    return (angle == 0 || angle > 45);
 }
