@@ -6,10 +6,10 @@ interface BlockAngles {
 
 // Defines angles for each orientation of triangle within 2 by 2 block.
 // TL TR BR BL DOT , black squares contribute 0 degrees.
-var anglesTL:BlockAngles = {8:90, 9:45, 11:0, 10:45, 7:90, 1:0, 2:0, 3:0, 4:0, 5:0, 6:0}; 
-var anglesTR:BlockAngles = {8:45, 9:90, 11:45, 10:0, 7:90, 1:0, 2:0, 3:0, 4:0, 5:0, 6:0}; 
-var anglesBL:BlockAngles = {8:45, 9:0, 11:45, 10:90, 7:90, 1:0, 2:0, 3:0, 4:0, 5:0, 6:0}; 
-var anglesBR:BlockAngles = {8:0, 9:45, 11:90, 10:45, 7:90, 1:0, 2:0, 3:0, 4:0, 5:0, 6:0}; 
+var anglesTL:BlockAngles = {8:90, 9:45, 11:0, 10:45, 7:90, 1:0, 2:0, 3:0, 4:0, 5:0, 6:0, 0:90}; 
+var anglesTR:BlockAngles = {8:45, 9:90, 11:45, 10:0, 7:90, 1:0, 2:0, 3:0, 4:0, 5:0, 6:0, 0:90}; 
+var anglesBL:BlockAngles = {8:45, 9:0, 11:45, 10:90, 7:90, 1:0, 2:0, 3:0, 4:0, 5:0, 6:0, 0:90}; 
+var anglesBR:BlockAngles = {8:0, 9:45, 11:90, 10:45, 7:90, 1:0, 2:0, 3:0, 4:0, 5:0, 6:0, 0:90}; 
 
 function mayBeSolvable(board:Square[][]):boolean {
     // Empty board is may be solvable.   
@@ -26,16 +26,15 @@ function mayBeSolvable(board:Square[][]):boolean {
                 var subBoard = [TL, TR, BR, BL];
                 // Any 45 degree angle implies no chance of solving.
                 if (!validBlock(subBoard, maybeValidAngle)) {
+                    console.log("validBlock");
                     return false;
                 }                               
                 if (!checkSide(subBoard, numRows, numCols, row, col, maybeValidAngle)){
+                    console.log("checkSide");
                     return false;
                 }      
             }
-            // Black squares with numbers.
-            if (checkBlackSquare(row, col, board) == false){
-                return false;
-            }                 
+            // Black squares with invalid side triangles. DO NOT consider number of triangles.               
         }
     }  
     if (!checkCorners(board)) return false;
@@ -124,73 +123,12 @@ function validBlock(cellTypes:Square[], checkAngle:(arg:number)=>boolean): boole
     return true;
 }
 
-function currAccessible(corner:number, curr:Square):boolean{    
-    var outcome = false;
-    if (curr < Square.Dot) return true;    
-    // Prev not accessible triangles.
-    switch(corner){
-        case 0:
-            outcome = (curr == Square.TriBR || curr == Square.TriTR); 
-            break; 
-        case 1:
-            outcome = (curr == Square.TriBR || curr == Square.TriBL); 
-            break; 
-        case 2:
-            outcome = (curr == Square.TriBL || curr == Square.TriTL); 
-            break; 
-        case 3:
-            outcome = (curr == Square.TriTL || curr == Square.TriTR); 
-            break;
-        default:
-            outcome = false;                         
-    }    
-    return outcome;
-}
-
-// clockwise
-function nextAccessible(corner:number, next:Square):boolean{
-    var outcome = false;   
-    if (next == Square.Dot) return true;   
-    switch(corner){
-        case 0:
-            outcome = (next == Square.TriTL || next == Square.TriTR); 
-            break; 
-        case 1:
-            outcome = (next == Square.TriBR || next == Square.TriTR); 
-            break; 
-        case 2:
-            outcome = (next == Square.TriBL || next == Square.TriBR); 
-            break; 
-        case 3:
-            outcome = (next == Square.TriTL || next == Square.TriBL); 
-            break;
-        default:
-            outcome = false;                         
-    }
-    return outcome;
-}
-
-function getAngle(index:number, type:Square):number{
-    switch (index){
-        case 0:
-            return anglesTL[type];
-        case 1:
-            return anglesTR[type];
-        case 2:
-            return anglesBR[type];
-        case 3:
-            return anglesBL[type];
-        default:
-            return 0;                                    
-    }
-}
-
 function checkBlackSquare(row:number, col:number, board:Square[][]):boolean {
     var type = board[row][col];        
     var numRows = board.length;
     var numCols = board[0].length; 
     // Not a black square with number
-    if (type >= Square.Dot || type <= 1){
+    if (type >= Square.Dot || type <= 1 || type == Square.Black){
         return true; // Do not return any value. No check - no error.
     }
     var reqTriangles = blackSqNum(type);
@@ -230,15 +168,19 @@ function checkSide(subBoard:Square[], numRows:number, numCols:number,
     var bl = subBoard[3];
     var br = subBoard[2];   
     if (row == 0){
+        //console.log("top");
         if (checkTopSide(tl, tr, f) == false) return false;
     }
     if (col == 0){
+        //console.log("left side");
         if (checkLeftSide(tl, bl, f) == false) return false;
     }
     if (col == numCols - 2){
+       //console.log("right side");
         if (checkRightSide(tr, br, f) == false) return false;
     }
     if (row == numRows - 2){
+        //console.log("bottom");
         if (checkBottomSide(bl, br, f) == false) return false;
     }  
     return true;      
@@ -377,7 +319,7 @@ function checkLeftSide(cell1:number, cell2:number, checkAngle:(arg:number)=>bool
 
 function checkTopSide(cell1:number, cell2:number, checkAngle:(arg:number)=>boolean):boolean {  
     var firstAngle = anglesBL[cell1];
-    var secondAngle = anglesBR[cell2];      
+    var secondAngle = anglesBR[cell2];  
     if ((firstAngle > 0) && (cell1 == Square.TriTL || cell1 == Square.TriBL || cell1 == Square.Dot)){
         if (cell2 != Square.TriBL){
             firstAngle += secondAngle;
@@ -391,4 +333,65 @@ function checkTopSide(cell1:number, cell2:number, checkAngle:(arg:number)=>boole
         }
     }    
     return checkAngle(secondAngle);   
+}
+
+function currAccessible(corner:number, curr:Square):boolean{    
+    var outcome = false;
+    if (curr < Square.Dot) return true;    
+    // Prev not accessible triangles.
+    switch(corner){
+        case 0:
+            outcome = (curr == Square.TriBR || curr == Square.TriTR); 
+            break; 
+        case 1:
+            outcome = (curr == Square.TriBR || curr == Square.TriBL); 
+            break; 
+        case 2:
+            outcome = (curr == Square.TriBL || curr == Square.TriTL); 
+            break; 
+        case 3:
+            outcome = (curr == Square.TriTL || curr == Square.TriTR); 
+            break;
+        default:
+            outcome = false;                         
+    }    
+    return outcome;
+}
+
+// clockwise
+function nextAccessible(corner:number, next:Square):boolean{
+    var outcome = false;   
+    if (next == Square.Dot) return true;   
+    switch(corner){
+        case 0:
+            outcome = (next == Square.TriTL || next == Square.TriTR); 
+            break; 
+        case 1:
+            outcome = (next == Square.TriBR || next == Square.TriTR); 
+            break; 
+        case 2:
+            outcome = (next == Square.TriBL || next == Square.TriBR); 
+            break; 
+        case 3:
+            outcome = (next == Square.TriTL || next == Square.TriBL); 
+            break;
+        default:
+            outcome = false;                         
+    }
+    return outcome;
+}
+
+function getAngle(index:number, type:Square):number{
+    switch (index){
+        case 0:
+            return anglesTL[type];
+        case 1:
+            return anglesTR[type];
+        case 2:
+            return anglesBR[type];
+        case 3:
+            return anglesBL[type];
+        default:
+            return 0;                                    
+    }
 }
