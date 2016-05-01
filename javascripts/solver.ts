@@ -40,7 +40,7 @@ function mayBeSolvable(board:Square[][]):boolean {
     return true;
 }
 
-function innerAngleIsMaybe(board:Square[][]):boolean {
+function innerAngleIsMaybe(cellTypes:Square[]):boolean {
     
     return true;
 }
@@ -60,8 +60,8 @@ function isSolved(board: Square[][]): boolean {
                 var TR = board[row][col + 1];
                 var BL = board[row + 1][col];
                 var BR = board[row + 1][col + 1];
-                var subBoard = [TL, TR, BL, BR];
-                if (!validBlock([TL,TR, BR, BL])){
+                var subBoard = [TL, TR, BR, BL];
+                if (!validBlock(subBoard)){
                     return false;
                 }           
                 if (!checkSide(subBoard, numRows, numCols, row, col, isValidAngle)){
@@ -226,84 +226,12 @@ function checkBlackSquare(row:number, col:number, board:Square[][]):boolean {
     return true;
 }
 
-function checkBottomSide(cell1:number, cell2:number, checkAngle:(arg:number)=>boolean):boolean {
-    var firstAngle = anglesTL[cell1];
-    var secondAngle = anglesTR[cell2];      
-    if ((firstAngle > 0) && (cell1 == Square.TriTL || cell1 == Square.TriBL || cell1 == Square.Dot)){
-        if (cell2 != Square.TriTL){
-            firstAngle += secondAngle;
-        }
-    }     
-    if (!checkAngle(firstAngle)) return false;
-    firstAngle =  anglesTL[cell1];    
-    if ((secondAngle > 0) && (cell2 == Square.TriTR || cell2 == Square.TriBR || cell2 == Square.Dot)){
-        if (cell1 != Square.TriTR){
-            secondAngle += firstAngle;
-        }
-    }
-    return checkAngle(secondAngle);  
-}
-
-function checkRightSide(cell1:number, cell2:number, checkAngle:(arg:number)=>boolean):boolean {   
-    var firstAngle = anglesTL[cell1];
-    var secondAngle = anglesBL[cell2];   
-    if ((firstAngle > 0) && (cell1 == Square.TriTR || cell1 == Square.TriTL || cell1 == Square.Dot)){
-        if (cell2 != Square.TriTL){
-            firstAngle += secondAngle;
-        }
-    }     
-    if (!checkAngle(firstAngle)) return false;
-    firstAngle =  anglesTL[cell1]; 
-    if ((secondAngle > 0) && (cell2 == Square.TriBR || cell2 == Square.TriBL || cell2 == Square.Dot)){
-        if (cell1 != Square.TriBR){
-            secondAngle += firstAngle;
-        }
-    }
-    return checkAngle(secondAngle);  
-}
-
-function checkLeftSide(cell1:number, cell2:number, checkAngle:(arg:number)=>boolean):boolean {  
-    var firstAngle = anglesTR[cell1];
-    var secondAngle = anglesBR[cell2];
-    if ((firstAngle > 0) && (cell1 == Square.TriTR || cell1 == Square.TriTL || cell1 == Square.Dot)){
-        if (cell2 != Square.TriTR){
-            firstAngle += secondAngle;
-        }
-    }     
-    if (!checkAngle(firstAngle)) return false;    
-    firstAngle =  anglesTR[cell1];    
-    if ((secondAngle > 0) && (cell2 == Square.TriBR || cell2 == Square.TriBL || cell2 == Square.Dot)){
-        if (cell1 != Square.TriBR){
-            secondAngle += firstAngle;
-        }
-    }
-    return checkAngle(secondAngle);  
-}
-
-function checkTopSide(cell1:number, cell2:number, checkAngle:(arg:number)=>boolean):boolean {  
-    var firstAngle = anglesBL[cell1];
-    var secondAngle = anglesBR[cell2];      
-    if ((firstAngle > 0) && (cell1 == Square.TriTL || cell1 == Square.TriBL || cell1 == Square.Dot)){
-        if (cell2 != Square.TriBL){
-            firstAngle += secondAngle;
-        }
-    }     
-    if (!checkAngle(firstAngle)) return false;
-    firstAngle =  anglesBL[cell1];    
-    if ((secondAngle > 0) && (cell2 == Square.TriTR || cell2 == Square.TriBR || cell2 == Square.Dot)){
-        if (cell1 != Square.TriBR){
-            secondAngle += firstAngle;
-        }
-    }    
-    return checkAngle(secondAngle);   
-}
-
 function checkSide(subBoard:Square[], numRows:number, numCols:number, 
         row:number, col:number, f:(arg:number)=>boolean):boolean{  
     var tl = subBoard[0];
     var tr = subBoard[1];
-    var bl = subBoard[2];
-    var br = subBoard[3];   
+    var bl = subBoard[3];
+    var br = subBoard[2];   
     if (row == 0){
         if (checkTopSide(tl, tr, f) == false) return false;
     }
@@ -315,7 +243,8 @@ function checkSide(subBoard:Square[], numRows:number, numCols:number,
     }
     if (row == numRows - 2){
         if (checkBottomSide(bl, br, f) == false) return false;
-    }        
+    }  
+    return true;      
 }
 
 function checkCorners(board: Square[][]):boolean{   
@@ -393,4 +322,76 @@ function blackSqNum(cell:Square): number{
 
 function maybeValidAngle(angle:number):boolean {
     return (angle == 0 || angle > 45);
+}
+
+function checkBottomSide(cell1:number, cell2:number, checkAngle:(arg:number)=>boolean):boolean {
+    var firstAngle = anglesTL[cell1];
+    var secondAngle = anglesTR[cell2];      
+    if ((firstAngle > 0) && (cell1 == Square.TriTL || cell1 == Square.TriBL || cell1 == Square.Dot)){
+        if (cell2 != Square.TriTL){
+            firstAngle += secondAngle;
+        }
+    }     
+    if (!checkAngle(firstAngle)) return false;
+    firstAngle =  anglesTL[cell1];    
+    if ((secondAngle > 0) && (cell2 == Square.TriTR || cell2 == Square.TriBR || cell2 == Square.Dot)){
+        if (cell1 != Square.TriTR){
+            secondAngle += firstAngle;
+        }
+    }
+    return checkAngle(secondAngle);  
+}
+
+function checkRightSide(cell1:number, cell2:number, checkAngle:(arg:number)=>boolean):boolean {   
+    var firstAngle = anglesTL[cell1];
+    var secondAngle = anglesBL[cell2];   
+    if ((firstAngle > 0) && (cell1 == Square.TriTR || cell1 == Square.TriTL || cell1 == Square.Dot)){
+        if (cell2 != Square.TriTL){
+            firstAngle += secondAngle;
+        }
+    }     
+    if (!checkAngle(firstAngle)) return false;
+    firstAngle =  anglesTL[cell1]; 
+    if ((secondAngle > 0) && (cell2 == Square.TriBR || cell2 == Square.TriBL || cell2 == Square.Dot)){
+        if (cell1 != Square.TriBR){
+            secondAngle += firstAngle;
+        }
+    }
+    return checkAngle(secondAngle);  
+}
+
+function checkLeftSide(cell1:number, cell2:number, checkAngle:(arg:number)=>boolean):boolean {  
+    var firstAngle = anglesTR[cell1];
+    var secondAngle = anglesBR[cell2];
+    if ((firstAngle > 0) && (cell1 == Square.TriTR || cell1 == Square.TriTL || cell1 == Square.Dot)){
+        if (cell2 != Square.TriTR){
+            firstAngle += secondAngle;
+        }
+    }     
+    if (!checkAngle(firstAngle)) return false;    
+    firstAngle =  anglesTR[cell1];    
+    if ((secondAngle > 0) && (cell2 == Square.TriBR || cell2 == Square.TriBL || cell2 == Square.Dot)){
+        if (cell1 != Square.TriBR){
+            secondAngle += firstAngle;
+        }
+    }
+    return checkAngle(secondAngle);  
+}
+
+function checkTopSide(cell1:number, cell2:number, checkAngle:(arg:number)=>boolean):boolean {  
+    var firstAngle = anglesBL[cell1];
+    var secondAngle = anglesBR[cell2];      
+    if ((firstAngle > 0) && (cell1 == Square.TriTL || cell1 == Square.TriBL || cell1 == Square.Dot)){
+        if (cell2 != Square.TriBL){
+            firstAngle += secondAngle;
+        }
+    }     
+    if (!checkAngle(firstAngle)) return false;
+    firstAngle =  anglesBL[cell1];    
+    if ((secondAngle > 0) && (cell2 == Square.TriTR || cell2 == Square.TriBR || cell2 == Square.Dot)){
+        if (cell1 != Square.TriBR){
+            secondAngle += firstAngle;
+        }
+    }    
+    return checkAngle(secondAngle);   
 }
