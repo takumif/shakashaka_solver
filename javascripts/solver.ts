@@ -23,9 +23,11 @@ function mayBeSolvable(board:Square[][]):boolean {
                 var TR = board[row][col + 1];
                 var BL = board[row + 1][col];
                 var BR = board[row + 1][col + 1];              
-                var subBoard = [TL, TR, BL, BR];
+                var subBoard = [TL, TR, BR, BL];
                 // Any 45 degree angle implies no chance of solving.
-                                               
+                if (!validBlock(subBoard, maybeValidAngle)) {
+                    return false;
+                }                               
                 if (!checkSide(subBoard, numRows, numCols, row, col, maybeValidAngle)){
                     return false;
                 }      
@@ -40,12 +42,7 @@ function mayBeSolvable(board:Square[][]):boolean {
     return true;
 }
 
-function innerAngleIsMaybe(cellTypes:Square[]):boolean {
-    
-    return true;
-}
-
-/**************/
+/*****************************************************************/
 
 function isSolved(board: Square[][]): boolean {
     if (hasEmptyCell(board)) {
@@ -61,7 +58,7 @@ function isSolved(board: Square[][]): boolean {
                 var BL = board[row + 1][col];
                 var BR = board[row + 1][col + 1];
                 var subBoard = [TL, TR, BR, BL];
-                if (!validBlock(subBoard)){
+                if (!validBlock(subBoard, isValidAngle)){
                     return false;
                 }           
                 if (!checkSide(subBoard, numRows, numCols, row, col, isValidAngle)){
@@ -77,7 +74,7 @@ function isSolved(board: Square[][]): boolean {
     return true;
 } /**/
 
-function validBlock(cellTypes:Square[]): boolean{
+function validBlock(cellTypes:Square[], checkAngle:(arg:number)=>boolean): boolean{
     // Changes to  tl, tr, br, bl to follow clockwise direction!!!
     var angles:number[] = [0,0,0,0];
     var cellInd = 0; 
@@ -120,7 +117,7 @@ function validBlock(cellTypes:Square[]): boolean{
         counter++;           
     }   
     for (var ang of angles){
-        if (!isValidAngle(ang)){
+        if (!checkAngle(ang)){
             return false;
         }
     }    
