@@ -44,7 +44,7 @@ function mayBeSolvable(board:Square[][]):boolean {
                 if (col == numCols - 2){
                     if (checkRightSide(TR, BR, maybeValidAngle) == false) return false;
                 }
-                // check top side dots.
+                // check bottom side dots.
                 if (row == numRows - 2){
                     if (checkBottomSide(BL, BR, maybeValidAngle) == false) return false;
                 }        
@@ -88,27 +88,16 @@ function isSolved(board: Square[][]): boolean {
                 var TR = board[row][col + 1];
                 var BL = board[row + 1][col];
                 var BR = board[row + 1][col + 1];
-                
+                var subBoard = [TL, TR, BL, BR];
+
                 if (!validBlock([TL,TR, BR, BL])){
                     return false;
                 }
                 
-                // check top side dots.
-                if (row == 0){
-                    if (checkTopSide(TL, TR, isValidAngle) == false) return false;
+                if (!checkSide(subBoard, numRows, numCols, row, col, isValidAngle)){
+                    return false;
                 }
-                // check left side dots.
-                if (col == 0){
-                    if (checkLeftSide(TL, BL, isValidAngle) == false) return false;
-                }
-                // check right side dots.
-                if (col == numCols - 2){
-                    if (checkRightSide(TR, BR, isValidAngle) == false) return false;
-                }
-                // check top side dots.
-                if (row == numRows - 2){
-                    if (checkBottomSide(BL, BR, isValidAngle) == false) return false;
-                }        
+  
             }
             // Black squares with numbers.
             if (checkBlackSquare(row, col, board) == false){
@@ -403,6 +392,34 @@ function checkTopSide(cell1:number, cell2:number, checkAngle:(arg:number)=>boole
     
     return checkAngle(secondAngle);   
 }
+
+function checkSide(subBoard:Square[], numRows:number, numCols:number, 
+        row:number, col:number, f:(arg:number)=>boolean):boolean{
+    
+    var tl = subBoard[0];
+    var tr = subBoard[1];
+    var bl = subBoard[2];
+    var br = subBoard[3];   
+    
+    // check top side dots.
+    if (row == 0){
+        if (checkTopSide(tl, tr, f) == false) return false;
+    }
+    // check left side dots.
+    if (col == 0){
+        if (checkLeftSide(tl, bl, f) == false) return false;
+    }
+    // check right side dots.
+    if (col == numCols - 2){
+        if (checkRightSide(tr, br, f) == false) return false;
+    }
+    // check bottom side dots.
+    if (row == numRows - 2){
+        if (checkBottomSide(bl, br, f) == false) return false;
+    }        
+    return true; // All clear.
+}
+
 
 function checkCorners(board: Square[][]):boolean{
     
