@@ -34,7 +34,11 @@ function mayBeSolvable(board:Square[][]):boolean {
                     return false;
                 }      
             }
-            // Black squares with invalid side triangles. DO NOT consider number of triangles.               
+            // Black squares with invalid side triangles. DO NOT consider number of triangles.   
+            if (!blackSquareWithInvalidTriangle(row, col, board)) {
+                console.log("black square");
+                return false;            
+            }
         }
     }  
     if (!checkCorners(board)) return false;
@@ -128,7 +132,7 @@ function checkBlackSquare(row:number, col:number, board:Square[][]):boolean {
     var numRows = board.length;
     var numCols = board[0].length; 
     // Not a black square with number
-    if (type >= Square.Dot || type <= 1 || type == Square.Black){
+    if (type >= Square.Dot || type <= 1 || type <= Square.Black){
         return true; // Do not return any value. No check - no error.
     }
     var reqTriangles = blackSqNum(type);
@@ -206,6 +210,31 @@ function checkCorners(board: Square[][]):boolean{
     if (bottomright == Square.TriBL || bottomright == Square.TriTL || bottomright == Square.TriTR){
         return false;
     }
+    return true;
+}
+
+// Returns false for triangles that cannot be adjacent to the black square.
+function blackSquareWithInvalidTriangle(row:number, col:number, board:Square[][]): boolean{
+    var type = board[row][col];
+    var numRows = board.length;
+    var numCols = board[0].length; 
+    // Not a black square with number
+    if (type >= Square.Dot || type <= 1 || type <= Square.Black){
+        return true; // Do not return any value. No check - no error.
+    }
+    var leftCell = -1;
+    var rightCell = -1;
+    var topCell = -1;
+    var bottomCell = -1;
+    // All types surrounding cell.
+    if (col >= 0) leftCell = board[row][col - 1];
+    if (col < numCols) rightCell = board[row][col + 1];
+    if (row - 1 >= 0) topCell = board[row - 1][col];
+    if (row + 1 < numRows) bottomCell = board[row + 1][col]; 
+    if ((leftCell != -1) && (leftCell == Square.TriTL || leftCell == Square.TriBL)) return false;     
+    if ((rightCell != -1) && (rightCell == Square.TriTR || rightCell == Square.TriBR)) return false;     
+    if ((topCell != -1) && (topCell == Square.TriTL || topCell == Square.TriTR)) return false;     
+    if ((bottomCell != -1) && (bottomCell == Square.TriBL || bottomCell == Square.TriBR)) return false;     
     return true;
 }
 
