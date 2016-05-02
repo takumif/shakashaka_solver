@@ -2,7 +2,6 @@
 /// <reference path="solver.ts" />
 /// <reference path="solver_helper.ts" />
 
-
 /**
  * Returns null if the board is unsolvable. Does not modify the input board
  */
@@ -51,4 +50,13 @@ function parSolveByGuessingForSquare(originalBoard: Square[][], row: number, col
         }
     }
     return null;
+}
+
+function initWorkers(): void {
+    var workerScript = "par_worker.js";
+    var workerCount = 10;
+    var workers: Worker[] = new Array(workerCount);
+    for (var i = 0; i < workerCount; i++) {
+        workers[i] = new Worker(workerScript);
+    }
 }
