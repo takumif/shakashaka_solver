@@ -24,11 +24,10 @@ function mayBeSolvable(board:Square[][]):boolean {
                 var BL = board[row + 1][col];
                 var BR = board[row + 1][col + 1];              
                 var subBoard = [TL, TR, BR, BL];
-                // Any 45 degree angle implies no chance of solving.
-                if (!validBlock(subBoard, maybeValidAngle)) {
-                    console.log("validBlock");
+                if (!mayBeAngle(subBoard)){
+                    console.log("mayBeAngle check");
                     return false;
-                }                               
+                }                                                       
                 if (!checkSide(subBoard, numRows, numCols, row, col, maybeValidAngle)){
                     console.log("checkSide");
                     return false;
@@ -45,6 +44,71 @@ function mayBeSolvable(board:Square[][]):boolean {
     return true;
 }
 
+
+function mayBeAngle(cellTypes:Square[]):boolean {
+    
+    var subTriangles = [];
+    var ind = 0;
+    var numNonEmpty = 0;
+        
+    for (var type of cellTypes){
+        if (type > 0) {
+            numNonEmpty++;
+        }
+        if (ind == 0){
+            subTriangles.push(isBlackAt(type, 2));
+            subTriangles.push(isBlackAt(type, 3));
+        } else if (ind == 1){
+            subTriangles.push(isBlackAt(type, 1));
+            subTriangles.push(isBlackAt(type, 2));
+        } else  if (ind == 2){
+            subTriangles.push(isBlackAt(type, 0));
+            subTriangles.push(isBlackAt(type, 1));
+        } else{
+            subTriangles.push(isBlackAt(type, 3));
+            subTriangles.push(isBlackAt(type, 0));
+        }
+        ind++;
+    }
+    
+    if (numNonEmpty < 4) return true;
+    // All non empty, do additional check.
+    
+    var len = subTriangles.length;
+
+    var i = 0;
+    var firstAngle = 0;
+    while (i < 8){
+        // reach the first "black tri."
+        if (subTriangles[i] == true){
+            break;
+        }
+        firstAngle += 1;
+        i++;
+    }
+    
+    var angle = 0;
+    
+    while (i < 8){
+        if (subTriangles[i] == true){
+            if (angle % 2 == 1){
+                return false;
+            } else {
+                angle = 0;
+            }
+        } else {
+            angle += 1;
+        }
+        i++;
+    }
+    
+    if ((angle + firstAngle) % 2 == 1){
+        return false;
+    }
+    
+    return true;
+}
+
 /*****************************************************************/
 
 function isSolved(board: Square[][]): boolean {
@@ -53,22 +117,25 @@ function isSolved(board: Square[][]): boolean {
     }       
     var numRows = board.length;
     var numCols = board[0].length;        
-    for (var row = 0; row < numRows; row++) {
-        for (var col = 0; col <numCols; col++) {            
+    for (var row = 0; row < numRows - 1; row++) {
+        for (var col = 0; col <numCols - 1; col++) {            
             if ((row < numRows - 1) && (col < numCols - 1)){    
                 var TL = board[row][col];
                 var TR = board[row][col + 1];
                 var BL = board[row + 1][col];
                 var BR = board[row + 1][col + 1];
                 var subBoard = [TL, TR, BR, BL];
-                if (!validBlock(subBoard, isValidAngle)){
+                if (!isValidBlock(TL, TR, BL, BR)){
+                    console.log("isValidBlock");
                     return false;
-                }           
+                }          
                 if (!checkSide(subBoard, numRows, numCols, row, col, isValidAngle)){
+                    console.log("checkSide");
                     return false;
                 }
             }
             if (checkBlackSquare(row, col, board) == false){
+                console.log("checkBlackSquare");
                 return false;
             }                   
         }
@@ -100,8 +167,10 @@ function validBlock(cellTypes:Square[], checkAngle:(arg:number)=>boolean): boole
         }        
         if (counter == 5 && (currAccessible(prevInd , prevCell)))
             break;        
-        if ((angles[index] + ang) <= 360)
-            angles[index] += ang;                  
+        if ((angles[index] + ang) <= 360){
+            //if (index == 3) console.log("Print: ang = " + ang + " angles[index] = " + angles[index]);
+            angles[index] += ang;         
+        }         
         var bl_cell = cellTypes[3];
         if (counter == 0 && (bl_cell == Square.Dot || bl_cell == Square.TriBL || bl_cell == Square.TriBR)){
             if (currCell == Square.TriTR || currCell == Square.TriTL || currCell == Square.Dot){
@@ -119,6 +188,7 @@ function validBlock(cellTypes:Square[], checkAngle:(arg:number)=>boolean): boole
         cellInd = (cellInd + 1) % 4;
         counter++;           
     }   
+    //console.log(angles);
     for (var ang of angles){
         if (!checkAngle(ang)){
             return false;
@@ -240,6 +310,10 @@ function blackSquareWithInvalidTriangle(row:number, col:number, board:Square[][]
 
 /************************************** AUX FUNCTIONS ***********************************************/
 
+function maybeValidAngle(angle:number):boolean {
+    return (angle == 0 || angle > 45);
+}
+
 function max(a:number, b:number): number {
     return (a > b) ? a : b;   
 }
@@ -286,10 +360,6 @@ function blackSqNum(cell:Square): number{
             break;                                           
     }
     return reqTriangles;
-}
-
-function maybeValidAngle(angle:number):boolean {
-    return (angle == 0 || angle > 45);
 }
 
 function checkBottomSide(cell1:number, cell2:number, checkAngle:(arg:number)=>boolean):boolean {
@@ -424,3 +494,239 @@ function getAngle(index:number, type:Square):number{
             return 0;                                    
     }
 }
+
+// Check validity for 2 by 2 block.
+function isValidBlock(tl:number, tr:number, bl:number, br:number): boolean {
+    
+            
+    // Check only inner dot in 2 by 2 block.
+    
+    var angles:Array<number> = new Array<number>();
+
+    /****** CORNER 1 (TL) *******/    
+    // Calc. angles surrounding inner dot.
+    var sum1 = 0;
+    sum1 += anglesTL[tl];
+    // Only for one angle coming from TL portion.
+    // Sum adjacent angles in clockwise fashion iff tl is top-left or bottom-right triangle.
+    // (Not case tri), (triangles in case), (tri in adjacent case)
+    if ((tl != Square.TriTR) && (tl == Square.TriTL || tl == Square.TriBL || tl == Square.Dot) && (tr == Square.TriBR || tr == Square.TriTR || tr == Square.Dot)){
+        sum1 += anglesTR[tr];
+        //console.log("--1.1--");
+        if ((tr == Square.TriTR || tr == Square.Dot) && (br == Square.TriBL || br == Square.TriBR || br == Square.Dot)){
+            sum1 += anglesBR[br];
+            //console.log("--2.1--");
+            if ((br == Square.TriBR || br == Square.Dot) && (bl == Square.TriBL || bl == Square.TriTL || bl == Square.Dot)){
+                sum1 += anglesBL[bl];        
+                //console.log("--3.1--");    
+            }
+        }
+        
+        // Initially started with a TL triangle or Dot.
+        if ((sum1 < 360) && (tl == Square.TriTL || tl == Square.Dot) && (bl == Square.TriBR || bl == Square.Dot || bl == Square.TriBL)){
+                //console.log("--4.1--");
+                sum1 += anglesBL[bl];
+        }
+    } 
+
+    //console.log("Clockwise: " + sum1);    
+
+    var sum2 = 0;
+    var repeats = 0;
+    sum2 += anglesTL[tl];    
+    if ((tl != Square.TriBL) && (tl == Square.TriTL || tl == Square.TriTR || tl == Square.Dot) && (bl == Square.TriBL || bl == Square.TriBR || bl == Square.Dot)){
+        sum2 += anglesBL[bl];
+       // console.log("--1.2--");
+        if ((bl == Square.TriBL || bl == Square.Dot) && (br == Square.TriBR || br == Square.TriTR || br == Square.Dot)){
+            sum2 += anglesBR[br];
+            //console.log("--2.2--");
+            if ((br == Square.TriBR || br == Square.Dot) && (tr == Square.TriTL || tr == Square.TriTR || tr == Square.Dot)){
+                sum2 += anglesTR[tr]; 
+                //console.log("--3.2--");
+            }
+        }
+        // Initially started with a TL triangle or Dot.
+        if ((sum1 < 360) && (tl == Square.TriTL || tl == Square.Dot) && (tr == Square.TriBR || tr == Square.Dot || tr == Square.TriTR)){
+            sum2 += anglesTR[tr];
+            //console.log("--4.2--");
+        }
+    }     
+    
+    //console.log("Anti-Clockwise: " + sum2);    
+
+    // Add the larger angle during rotational travel.
+    angles.push(max(sum1, sum2));
+    //console.log("Corner 1 - Final angle: " + angles[0]);
+
+    /********* END CORNER 1 ********/    
+
+
+    /****** CORNER 2 (TR) *******/    
+
+    // Calc. angles surrounding inner dot.
+    sum1 = 0;
+    sum1 += anglesTR[tr];    
+    // (Not case tri), (triangles in case), (tri in adjacent case)
+    if ((tr != Square.TriBR) && (tr == Square.TriTL || tr == Square.TriTR || tr == Square.Dot) && (br == Square.TriBR || br == Square.TriBL || br == Square.Dot)){
+        sum1 += anglesBR[br];
+        //console.log("--1.1--");
+        if ((br == Square.TriBR || br == Square.Dot) && (bl == Square.TriBL || bl == Square.TriTL || bl == Square.Dot)){
+            sum1 += anglesBL[bl];
+            //console.log("--2.1--");
+            if ((bl == Square.TriBR || bl == Square.Dot) && (tl == Square.TriTL || tl == Square.TriTR || tl == Square.Dot)){
+                sum1 += anglesTL[tl];        
+                //console.log("--3.1--");    
+            }
+        }
+        
+        // Initially started with a TL triangle or Dot.
+        if ((sum1 < 360) && (tr == Square.TriTR || tr == Square.Dot) && (tl == Square.TriTL || tl == Square.Dot || tl == Square.TriBL)){
+            //console.log("--4.1--");
+            sum1 += anglesTL[tl];
+        }
+    } 
+
+    //console.log("Clockwise: " + sum1);    
+
+    sum2 = 0;
+    var repeats = 0;
+    sum2 += anglesTR[tr];    
+    if ((tr != Square.TriTL) && (tr == Square.TriTR || tr == Square.TriBR || tr == Square.Dot) && (tl == Square.TriBL || tl == Square.TriTL || tl == Square.Dot)){
+        sum2 += anglesTL[tl];
+        //console.log("--1.2--");
+        if ((tl == Square.TriTL || tl == Square.Dot) && (bl == Square.TriBL || bl == Square.TriBR || bl == Square.Dot)){
+            sum2 += anglesBL[bl];
+            //console.log("--2.2--");
+            if ((bl == Square.TriBL || bl == Square.Dot) && (br == Square.TriBR || br == Square.TriTR || br == Square.Dot)){
+                sum2 += anglesBR[br]; 
+                //console.log("--3.2--");
+            }
+        }
+        // Initially started with a TL triangle or Dot.
+        if ((sum1 < 360) && (tr == Square.TriTR || tr == Square.Dot) && (br == Square.TriBL || br == Square.Dot || br == Square.TriBR)){
+            sum2 += anglesBR[br];
+            //console.log("--4.2--");
+        }
+    }     
+    
+    //console.log("Anti-Clockwise: " + sum2);    
+    angles.push(max(sum1, sum2));
+    //console.log("Corner 2 - Final angle: " + angles[1]);
+
+    /********* END CORNER 2 ********/    
+
+    /****** CORNER 3 (BL) *******/    
+
+    var sum1 = 0;
+    sum1 += anglesBL[bl];
+    if ((bl != Square.TriTL) && (bl == Square.TriBR || bl == Square.TriBL || bl == Square.Dot) && (tl == Square.TriTR || tl == Square.TriTL || tl == Square.Dot)){
+        sum1 += anglesTL[tl];
+        //console.log("--1.1--");
+        if ((tl == Square.TriTL || tl == Square.Dot) && (tr == Square.TriBR || tr == Square.TriTR || tr == Square.Dot)){
+            sum1 += anglesTR[tr];
+            //console.log("--2.1--");
+            if ((tr == Square.TriTR || tr == Square.Dot) && (br == Square.TriBR || br == Square.TriBL || br == Square.Dot)){
+                sum1 += anglesBR[br];        
+                //console.log("--3.1--");    
+            }
+        }
+        if ((sum1 < 360) && (bl == Square.TriBL || bl == Square.Dot) && (br == Square.TriBR || br == Square.Dot || br == Square.TriTR)){
+                //console.log("--4.1--");
+                sum1 += anglesBR[br];
+        }
+    } 
+    //console.log("Clockwise: " + sum1);    
+    var sum2 = 0;
+    var repeats = 0;
+    sum2 += anglesBL[bl];    
+    if ((bl != Square.TriBR) && (bl == Square.TriTL || bl == Square.TriBL || bl == Square.Dot) && (br == Square.TriTR || br == Square.TriBR || br == Square.Dot)){
+        sum2 += anglesBR[br];
+        //console.log("--1.2--");
+        if ((br == Square.TriBR || br == Square.Dot) && (tr == Square.TriTL || tr == Square.TriTR || tr == Square.Dot)){
+            sum2 += anglesTR[tr];
+            //console.log("--2.2--");
+            if ((tr == Square.TriTR || tr == Square.Dot) && (tl == Square.TriTL || tl == Square.TriBL || tl == Square.Dot)){
+                sum2 += anglesTL[tl]; 
+                //console.log("--3.2--");
+            }
+        }
+        // Initially started with a TL triangle or Dot.
+        if ((sum1 < 360) && (bl == Square.TriBL || bl == Square.Dot) && (tl == Square.TriTL || tl == Square.Dot || tl == Square.TriTR)){
+            sum2 += anglesTL[tl];
+           // console.log("--4.2--");
+        }
+    }     
+    //console.log("Anti-Clockwise: " + sum2);    
+    // Add the larger angle during rotational travel.
+    angles.push(max(sum1, sum2));
+   // console.log("Corner 3 - Final angle: " + angles[2]);
+
+    /********* END CORNER 3 ********/ 
+
+    /****** CORNER 4 (BR) NOTE: I got the directions mixed up but still OK *******/    
+
+    var sum1 = 0;
+    sum1 += anglesBR[br];
+    if ((br != Square.TriTR) && (br == Square.TriBL || br == Square.TriBR || br == Square.Dot) && (tr == Square.TriTR || tr == Square.TriTL || tr == Square.Dot)){
+        sum1 += anglesTR[tr];
+        //console.log("--1.1--");
+        if ((tr == Square.TriTR || tr == Square.Dot) && (tl == Square.TriBL || tl == Square.TriTL || tl == Square.Dot)){
+            sum1 += anglesTL[tl];
+            //console.log("--2.1--");
+            if ((tl == Square.TriTL || tl == Square.Dot) && (bl == Square.TriBR || bl == Square.TriBL || bl == Square.Dot)){
+                sum1 += anglesBL[bl];        
+                //console.log("--3.1--");    
+            }
+        }
+        
+        if ((sum1 < 360) && (br == Square.TriBR || br == Square.Dot) && (bl == Square.TriBL || bl == Square.Dot || bl == Square.TriTL)){
+                //console.log("--4.1--");
+                sum1 += anglesBL[bl];
+        }
+    } 
+
+   // console.log("Anti-Clockwise: " + sum1);    
+
+    var sum2 = 0;
+    var repeats = 0;
+    sum2 += anglesBR[br];    
+    if ((br != Square.TriBL) && (br == Square.TriTR || br == Square.TriBR || br == Square.Dot) && (bl == Square.TriTL || bl == Square.TriBL || bl == Square.Dot)){
+        sum2 += anglesBL[bl];
+        //console.log("--1.2--");
+        if ((bl == Square.TriBL || bl == Square.Dot) && (tl == Square.TriTL || tl == Square.TriTR || tl == Square.Dot)){
+            sum2 += anglesTL[tl];
+           // console.log("--2.2--");
+            if ((tl == Square.TriTL || tl == Square.Dot) && (tr == Square.TriTR || tr == Square.TriBR || tr == Square.Dot)){
+                sum2 += anglesTR[tr]; 
+                //console.log("--3.2--");
+            }
+        }
+        // Initially started with a TL triangle or Dot.
+        if ((sum1 < 360) && (br == Square.TriBR || br == Square.Dot) && (tr == Square.TriTL || tr == Square.Dot || tr == Square.TriTR)){
+            sum2 += anglesTR[tr];
+            //console.log("--4.2--");
+        }
+    }     
+    
+    //console.log("Clockwise: " + sum2);    
+
+    // Add the larger angle during rotational travel.
+    angles.push(max(sum1, sum2));
+    //console.log("Corner 4 - Final angle: " + angles[3]);
+
+    /********* END CORNER 4 ********/ 
+
+    //console.log("All angles : " + angles);
+
+    // Do check for invalid angles.
+    for (var a of angles){
+        // Angle not found in valid angles.
+        if (!(a == 0 || a == 90 || a == 180 || a == 360)){
+            //console.log("Invalid");
+            return false;
+        }
+    }
+    
+    // No invalid angle found.
+    return true;
+} /**/
