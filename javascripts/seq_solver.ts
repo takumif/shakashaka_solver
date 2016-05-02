@@ -3,7 +3,6 @@
 /// <reference path="solver_helper.ts" />
 
 
-
 /**
  * Returns null if the board is unsolvable. Does not modify the input board
  */
@@ -15,7 +14,11 @@ function seqSolve(originalBoard: Square[][]): Square[][] {
     }
     if (isSolved(board)) {
         return board;
-    } else {
+    } else {       
+        if (!mayBeSolvable(board)) {
+            //console.log(board);
+            return null;
+        }
         return seqSolveByGuessing(board);
     }
 }
