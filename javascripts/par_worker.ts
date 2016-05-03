@@ -26,7 +26,7 @@ class ParallelWorker {
     
     private initWorker(): void {
         this.worker = new Worker(ParallelWorker.workerScript);
-        this.worker.onmessage = function(e: MessageEvent): void {
+        this.worker.onmessage = (e: MessageEvent): void => {
             console.log(e.data.workId);
             console.log(this.callbacks);
             var callback = this.callbacks[e.data.workId];
