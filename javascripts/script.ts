@@ -29,7 +29,11 @@ $(() => {
       $("#display_time > p").text(time);       
     });
 
-  
+    $("#clear_solver").on("click", function(evt){
+      evt.preventDefault(); // Prevent browser from refreshing on click.
+      drawBoard(board, $(".board"));
+    });
+      
 });
 
 // function runSingleBlockCases(): void{
