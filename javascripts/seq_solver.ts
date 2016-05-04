@@ -14,7 +14,7 @@ function seqSolve(originalBoard: Square[][]): Square[][] {
     }
     if (isSolved(board)) {
         return board;
-    } else {       
+    } else {        
         if (!mayBeSolvable(board)) {
             //console.log(board);
             return null;

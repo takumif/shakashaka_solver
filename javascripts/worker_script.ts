@@ -1,4 +1,5 @@
 /// <reference path="par_solver.ts" />
+
 importScripts(
     "board.js",
     "solver.js",
