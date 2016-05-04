@@ -13,7 +13,7 @@ $(() => {
     //board = [[1,8,9,7,2], [7,10,7,9,7], [8,9,10,7,9], [10,7,9,10,11], [4,10,11,7,1]];        
     //board = [[1,0,0,0,2], [0,0,10,0,7], [0,0,0,7,0], [10,0,9,0,0], [4,0,11,0,1]];    
     board = [[4,0,0,4],[0,0,0,0],[0,0,0,0],[4,0,0,4]];       
-    board = [[3,0,1],[0,0,0],[0,0,3]];
+    //board = [[3,0,1],[0,0,0],[0,0,3]];
            
     drawBoard(board, $(".board"));
 
@@ -23,8 +23,8 @@ $(() => {
       var start = new Date().getTime();
       var outputBoard = seqSolve(board);    
       var end = new Date().getTime();
-      var time = end - start;
-      console.log("Time taken (seconds) = " + time/1000.0);    
+      var time = (end - start)/1000.0;
+      console.log("Time taken (seconds) = " + time);    
       drawBoard(outputBoard, $(".board"));
       $("#display_time > p").text(time);       
     });
