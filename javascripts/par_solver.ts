@@ -32,7 +32,7 @@ class ParallelSolver {
             this.parSolveByGuessing(board);
         }
     }
-
+    
     /**
      * Does not modify the input board
      */
