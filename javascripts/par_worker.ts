@@ -31,6 +31,10 @@ class ParallelWorker {
         }
     }
     
+    kill(): void {
+        this.worker.terminate();
+    }
+    
     private initWorker(): void {
         this.worker = new Worker(ParallelWorker.workerScript);
         this.worker.onmessage = (e: MessageEvent): void => {
