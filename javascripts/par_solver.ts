@@ -3,70 +3,94 @@
 /// <reference path="solver_helper.ts" />
 
 class ParallelSolver {
-    private workers: ParallelWorker[];
+
     private static workerScript = "par_worker.js";
     private static workerCount = 10;
-    
-    constructor() {
-        this.initWorkers();
-    }
+    private workers: ParallelWorker[];
+    private idleWorkers: number;
+    private boardsToSolve: Square[][][];
+    private callback: (result: Square[][]) => void;
+    private finished: boolean;
     
     /**
-     * Returns null if the board is unsolvable. Does not modify the input board
+     * Does not modify the input board. The callback is called with null as the
+     * result if the board is unsolvable
      */
-    parSolve(originalBoard: Square[][]): Square[][] {
+    parSolve(originalBoard: Square[][], callback: (result: Square[][]) => void): void {
+        this.initWorkers();
+        this.idleWorkers = this.workers.length;
+        this.boardsToSolve = [];
+        this.callback = callback;
+        this.finished = false;
         var board = copyBoard(originalBoard);
         var progress = true;
         while (progress) {
             progress = fillDeducibleSquares(board);
         }
         if (isSolved(board)) {
-            return board;
+            callback(board);
         } else {
-            return this.parSolveByGuessing(board);
+            this.parSolveByGuessing(board);
         }
-    }
-
-    /**
-     * Returns null if the board is unsolvable. Does not modify the input board
-     */
-    private parSolveByGuessing(originalBoard: Square[][]): Square[][] {
-        for (var row = 0; row < originalBoard.length; row++) {
-            for (var col = 0; col < originalBoard[0].length; col++) {
-                var solution = this.parSolveByGuessingForSquare(originalBoard, row, col);
-                if (solution != null) {
-                    return solution;
-                }
-            }
-        }
-        return null;
     }
     
     /**
-     * Returns null if the board is unsolvable or the square is already filled.
      * Does not modify the input board
      */
-    private parSolveByGuessingForSquare(originalBoard: Square[][], row: number, col: number): Square[][] {
+    private parSolveByGuessing(originalBoard: Square[][]): void {
+        for (var row = 0; row < originalBoard.length; row++) {
+            for (var col = 0; col < originalBoard[0].length; col++) {
+                var solution = this.parSolveByGuessingForSquare(originalBoard, row, col);
+            }
+        }
+        for (var i = 0; i < this.workers.length; i++) {
+            if (this.boardsToSolve.length == 0) {
+                break;
+            }
+            this.sendBoardToWorker(this.boardsToSolve.pop(), this.workers[i]);
+            this.idleWorkers--;
+        }
+    }
+    
+    /**
+     * Does not modify the input board
+     */
+    private parSolveByGuessingForSquare(originalBoard: Square[][], row: number, col: number): void {
         if (originalBoard[row][col] == Square.Empty) {
             var possibilities = [Square.TriTR, Square.TriTL, Square.TriBL, Square.TriBR, Square.Dot];
             for (var i in possibilities) {
                 var board = copyBoard(originalBoard);
                 board[row][col] = possibilities[i];
                 if (mayBeSolvable(board)) {
-                    this.sendBoardToAWorker(board);
+                    this.boardsToSolve.push(board);
                 }
             }
         }
-        return null;
     }
-    
-    private sendBoardToAWorker(board: Square[][]): void {
-        var worker = this.getLeastBusyWorker();
+
+    private sendBoardToWorker(board: Square[][], worker: ParallelWorker): void {
         worker.submitWork(board, (result) => {
-            if (result != null) {
-                console.log(result);
+            if (!this.finished) {
+                if (result != null) {
+                    this.finishSolving(result);
+                } else {
+                    if (this.boardsToSolve.length == 0) {
+                        this.idleWorkers++;
+                        if (this.idleWorkers == this.workers.length) {
+                            this.finishSolving(null);
+                        }
+                    } else {
+                        this.sendBoardToWorker(this.boardsToSolve.pop(), worker);
+                    }
+                }
             }
         });
+    }
+    
+    private finishSolving(result: Square[][]): void {
+        this.finished = true;
+        this.callback(result);
+        this.killWorkers();
     }
 
     private initWorkers(): void {
@@ -76,17 +100,10 @@ class ParallelSolver {
         }
     }
     
-    private getLeastBusyWorker(): ParallelWorker {
-        var worker = this.workers[0];
-        var minWorkCount = this.workers[0].getWorkCount();
-        for (var i = 1; i < this.workers.length; i++) {
-            var ithWorker = this.workers[i];
-            if (ithWorker.getWorkCount() < minWorkCount) {
-                console.log(i);
-                worker = ithWorker;
-                minWorkCount = ithWorker.getWorkCount();
-            }
+    private killWorkers(): void {
+        for (var i = 0; i < this.workers.length; i++) {
+            this.workers[i].kill();
         }
-        return worker;
+        this.workers = [];
     }
 }
