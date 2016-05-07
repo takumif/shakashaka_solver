@@ -14,12 +14,8 @@ function seqSolve(originalBoard: Square[][]): Square[][] {
     }
     if (isSolved(board)) {
         return board;
-    } else {        
-        if (!mayBeSolvable(board)) {
-            //console.log(board);
-            return null;
-        }
-        return seqSolveByGuessing(board);
+    } else {       
+        return mayBeSolvable(board) ? seqSolveByGuessing(board) : null;
     }
 }
 

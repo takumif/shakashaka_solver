@@ -25,17 +25,17 @@ function mayBeSolvable(board:Square[][]):boolean {
                 var BR = board[row + 1][col + 1];              
                 var subBoard = [TL, TR, BR, BL];
                 if (!validBlock(subBoard, true)){
-                    console.log("mayBeAngle check");
+                    //console.log("mayBeAngle check");
                     return false;
                 }                                                       
                 if (!checkSide(subBoard, numRows, numCols, row, col, maybeValidAngle)){
-                    console.log("checkSide");
+                    //console.log("checkSide");
                     return false;
                 }      
             }
             // Black squares with invalid side triangles. DO NOT consider number of triangles.   
             if (!blackSquareWithInvalidTriangle(row, col, board)) {
-                console.log("black square");
+                //console.log("black square");
                 return false;            
             }
         }
@@ -61,16 +61,16 @@ function isSolved(board: Square[][]): boolean {
                 var BR = board[row + 1][col + 1];
                 var subBoard = [TL, TR, BR, BL];      
                 if (!validBlock(subBoard, false)){
-                    console.log("validBlock");
+                    //console.log("validBlock");
                     return false;
                 }
                 if (!checkSide(subBoard, numRows, numCols, row, col, isValidAngle)){
-                    console.log("checkSide");
+                    //console.log("checkSide");
                     return false;
                 }
             }
             if (checkBlackSquare(row, col, board) == false){
-                console.log("checkBlackSquare");
+                //console.log("checkBlackSquare");
                 return false;
             }                   
         }

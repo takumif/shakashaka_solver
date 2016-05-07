@@ -3,14 +3,14 @@
 importScripts(
     "board.js",
     "solver.js",
-    "par_solver.js",
+    "seq_solver.js",
     "solver_helper.js"
 );
 
 onmessage = function(e: MessageEvent): void {
     var message = {
         workId: e.data.workId,
-        result: parSolveByGuessing(e.data.work)
+        result: seqSolveByGuessing(e.data.work)
     };
     postMessage(message);
 }

@@ -53,7 +53,6 @@ function stringToSquare(name: string): Square {
 }
 
 function randomBoard(boardLen:number): Square[][] {
-    // Lame input.
     if (boardLen <= 1) return null;
     
     var board: Square[][] = new Array(boardLen);
@@ -61,8 +60,10 @@ function randomBoard(boardLen:number): Square[][] {
     for (var i = 0; i < boardLen; i++){
         board[i] = new Array(boardLen);
         for (var j = 0; j < boardLen; j++){
-            // A random type from 6 to 11.
-            board[i][j] = Math.floor(Math.random() * 6) + 6;
+            // A random type from 0 to 11.
+             var r = Math.floor(Math.random() * 11);
+             if (r < 7 && r > 3) r = 0;
+             board[i][j] = r;
         }
     }
     
