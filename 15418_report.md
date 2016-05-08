@@ -81,14 +81,15 @@ So instead, we put a main stack storing each board configuration in the main thr
 
 <img src="images/final_implementation.png" alt="final" width="500px" height="400px">
 
-
 The main thread initially assigns possible to solve boards to available worker threads. Then all other boards will put on the main thread's stack. Once the worker has completed checking a board, it will pop another board from the main stack and repeat the process (via message passing). 
 
 So rather than performing work in its own queue, the worker will request a new board whenever it finishes its task. 
 
 **NOTE**: although it may seem the workers seem to be contending for the top of the stack, it actually does not. This is because the individual workers have to send a message to the main thread (parallel worker) in which the main thread distributes the work in a sequential manner. Thus no locking is required to ensure the correctness of the program. 
 
-##Results
+##Results (final implementation)
+
+All tests are run on a Macbook Pro with a 2.7GHz dual-core Intel Core i5 processor. So there are 2 cores with 4 execution contexts on each machine. For each test, we timed the execution of the sequential and parallel functions separately, each time on a new opened browser.
 
 ###Sequential (one thread)
 
@@ -106,4 +107,4 @@ So rather than performing work in its own queue, the worker will request a new b
 
 <img src="images/5by5par.png" alt="final" width="400px" height="300px">
 
-
+For the sample 4 by 4 board, we have achieved a speedup of roughly ~2.66  over the sequential version.
