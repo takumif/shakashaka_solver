@@ -51,7 +51,7 @@ Our initial sequential solver brute force tries every possible board configurati
 
 <img src="images/impossible_board.png" alt="example_board" width="250px" height="250px">
 
-So next we implemented a mayBeSolvable() to remove boards that can never be solved. Now a partially solved 4 by 4 board can be solved in a reasonable amount of time.
+So next we implemented a mayBeSolvable() to remove boards that can never be solved (Example above 2nd row last column has a triangle in the wrong orientation). Now a partially solved 4 by 4 board can be solved in a reasonable amount of time.
 
 Now to distribute the work over parallel workers.
 
