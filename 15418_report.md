@@ -114,3 +114,12 @@ Depending on the initial board configurations, the speedup will vary since the s
 
 A key thing to note here is the performance of this program is dependent of the number of threads running on your operating system. If there are too many running threads (Eg. you opened many tabs or another browser such as Chrome), the speedup of the program will be reduced. This is because many threads will increase the overhead over the CPU's finite execution resources. So it is recommended that it to run this program on a single browser with as little opened applications as possible. 
 
+<img src="images/activity_monitor.png" alt="final" width="800px" height="75px">
+
+A key problem in our parallel implementation was that we did not kill all the web workers properly, as a result, the pool of workers accumulated overtime and this limited our performance gain. 
+
+##Conclusion
+
+Nevertheless, we are able to provide front-end parallelism using a client's machine in Javascript. 
+
+
