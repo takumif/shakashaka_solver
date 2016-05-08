@@ -40,10 +40,55 @@ And the last main part involves writing a parallel worker script using a stack d
 ##Approach
 
 The program is written in typescript (fancy javascript).
-We use the MDN web workers to distribute work onto the clients . 
+
+We use MDN web workers to achieve parallelism on the client side brower.
+
+(All code is written from scratch)
+
+<img src="images/message_passing.png" alt="message_passing" width="600px" height="450px"/>
+
+Our initial sequential solver brute force tries every possible board configuration and uses isSolve() to verify every board. Obviously, this implementation is very slow and can only solve a 3 by 3 board within a reasonable amount of time. Before we can parallelize the solver, we need to shave down number of impossible to solve configurations so that the size of our recursion tree becomes smaller. Also mapping an impossible configuration to a thread on a core will result in wasted computation.
+
+Eg. 
+// Insert impossible board configuration and display wasted tree branch.
+
+So next we implemented a mayBeSolvable() to remove boards that can never be solved. Now a partially solved 4 by 4 board can be solved in a reasonable amount of time.
+
+// Show sequential speedup (not neccessary)
+
+
+Now to distribute the work over parallel workers.
+
+We use the MDN web workers to statically distribute work onto the processing cores on the clients computer. We are not parallelizing over a board (since small boards already takes a long time to solve using brute force along) but instead, when running the solver algorithm, we generate a tree of board configurations. So in the first iteration of the algorithm, a tree with multiple subtrees are generated. And at the root of each subtree is a board configuration. Then we assign each subtree (or will be a subtree of configurations) to available workers in the worker pool. 
+
+// INSERT PICTURE HERE (tree)
+
+Each parallel worker has a **queue** to store board configurations. So while a single worker is still working on a board, any board pass from the main thread to the worker (as a message) is stored on the queue till the worker is freed from its current work. 
+
+// Diagram explaining how task was distributed from the main thread. (static distribution)
+
+The main threads assign a board to the least busy worker based on the number of boards on each worker's queue. This was not good since each board configuration yields a different size subtree of configurations and may not balance the workload evenly enough among the parallel workers.
+
+So we decided to modify the Parallel Solver to remanage the distribution of work.
+
+So instead, we put a main stack storing each board configuration in the main thread (parallel solver).
+
+// Diagram for single stack fetch 
+
+The main thread initially assigns possible to solve boards to available worker threads. Then all other boards will put on the main thread's stack. Once the worker has completed checking a board, it will pop another board from the main stack and repeat the process (via message passing). 
+
+So rather than performing work in its own queue, the worker will request a new board whenever it finishes its task. 
+
+**NOTE**: although it may seem the workers seem to be contending for the top of the stack, it actually does not. This is because the individual workers have to send a message to the main thread (parallel worker) in which the main thread distributes the work in a sequential manner. Thus no locking is required to ensure the correctness of the program. 
+
+
+// Insert subtree here
+
+Each black dot represents a board configuration.
+
+At any point in time as the algorithm runs, the traversal of the stack tree yields a sequence of boards in a single branch - in other words, although the running time of the brute force algorithm is exponential, the amount of memory used is based on the number of nodes along the path of traversal (as shown in the diagram) so is relatively small compared to the size of the tree. Hence, there was not much locality we can exploit here since the number of memory accesses pales in comparison to the amount of computations performed by the sequential solver. And every time a branch ends (reached an invalid board configuration), all the memory is deallocated automatically. Each board configuration at each node is unique, so caching is not useful.
 
 ##Results
-
 
 
 
