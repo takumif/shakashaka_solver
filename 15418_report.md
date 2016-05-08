@@ -12,13 +12,13 @@ There are 3 main parts to our program:
 
 ###1) Sequential solver
 
-The solver takes in a solvable Shakashaka board (a 2-D array of numbers) and returns a board which is solved. The algorithm first fills the deducible squares of the board (usually indicated by black squares with numbers). Then it calls the isSolved() function to check if the board is solved, otherwise it will call mayBeSolvable() function to check if such a board configuration can actually be solved, before calling seqSolveByGuessing(), which brute-force fills the board with all possible squares. Afterwards, it will keep repeating the process till it reaches a board configuration that isSolved() returns true.
+The solver takes in a solvable Shakashaka board (a 2-D array of numbers) and returns a board which is solved. The algorithm first fills the deducible squares of the board (usually indicated by black squares with numbers). Then it calls the isSolved() function (described below) to check if the board is solved, otherwise it will call mayBeSolvable() function to check if such a board configuration can actually be solved, before calling seqSolveByGuessing(), which brute-force fills the board with all possible squares, and sees if it generates a valid solution. Afterwards, it will keep repeating the process till it reaches a board configuration that isSolved() returns true.
 
 ###2) Sequential board checker
 
 The key part of this application relies on the checker to determine if the board is either solved or is possible to solve.
 
-For the isSolved( *some\_board_configuration* ), the algorithms checks the sides and corners for invalid configurations. For the inner squares, we use the validBlock() function which calculates the inner angle of a 2 by 2 sub-block. For example, let consider a 2 by 2 block of squares. We divide each square into 4 smaller triangles such as:
+For the isSolved( *some\_board_configuration* ) function, the algorithms checks the sides and corners for invalid configurations. For the inner squares, we use the validBlock() function which calculates the inner angle of a 2 by 2 sub-block. For example, let consider a 2 by 2 block of squares. We divide each square into 4 smaller triangles such as:
 
 	\ 0 /
 	1 x 3
