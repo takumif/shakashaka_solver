@@ -44,7 +44,7 @@ We use the MDN web workers to distribute work onto the clients .
 
 ##Results
 
-
+![GitHub Logo](images/message_passing.png)
 
 
 
