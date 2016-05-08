@@ -9,10 +9,16 @@
     <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
     <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
     <link rel="stylesheet" type="text/css" href="stylesheets/solver.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/timer.css" media="screen">
     <script src="https://code.jquery.com/jquery-2.2.2.min.js" integrity="sha256-36cp2Co+/62rEAAYHLmRCPIych47CvdM+uTBJwSzWjI=" crossorigin="anonymous"></script>
     <script src="javascripts/board.js"></script>
     <script src="javascripts/board_io.js"></script>
+    <script src="javascripts/solver_helper.js"></script>
     <script src="javascripts/script.js"></script>
+    <script src="javascripts/solver.js"></script>
+    <script src="javascripts/seq_solver.js"></script>
+    <script src="javascripts/par_worker.js"></script>
+    <script src="javascripts/par_solver.js"></script>
   </head>
   <body>
     <section class="page-header">
@@ -29,6 +35,22 @@
       </h2>
 
       <div class="board" oncontextmenu="return false;"></div>
+      
+      <form>
+        <button id="rand_board">Start New Board</button>
+        <button id="stop_timer">Stop Timer</button>   
+      </form>
+
+      <form>
+        <button id="run_par_solver">Run Parallel Solver</button> 
+        <button id="run_seq_solver">Run Sequential Solver</button>        
+        <button id="clear_solver">Reset Board</button> 
+      </form>
+            
+      <div class="timer">
+          <span class="hour">00</span>:<span class="minute">00</span>:<span class="second">00</span>
+      </div>   
+      <div id="display_time">Solver Time (seconds) =<p> </p></div>
 
       <footer class="site-footer">
         <span class="site-footer-owner"><a href="https://github.com/takumif/shakashaka_solver">Parallelized Shakashaka Solver</a> is maintained by <a href="https://github.com/takumif">takumif</a>.</span>
@@ -37,7 +59,6 @@
       </footer>
 
     </section>
-
   
   </body>
 </html>

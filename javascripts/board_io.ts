@@ -51,6 +51,8 @@ function bindSquares(): void {
         case 1: // left click
             var square = event.target;
             var currentType = stringToSquare(square.getAttribute("squareType"));
+            if (currentType > 0 && currentType < 7) break; // Skip black squares.
+            if (currentType == 0) currentType = 6; // So to start at dot.
             var nextTypeStr = squareToString(getNextSquareType(currentType));
             square.setAttribute("squareType", nextTypeStr);
             $(square).attr("src", "images/" + nextTypeStr + ".png");
@@ -58,6 +60,8 @@ function bindSquares(): void {
         case 3: // right click
             var square = event.target;
             var currentType = stringToSquare(square.getAttribute("squareType"));
+            if (currentType > 0 && currentType < 7) break; // Skip black squares.
+            if (currentType == 7) currentType = 12; // BR triangle
             var prevTypeStr = squareToString(getPrevSquareType(currentType));
             square.setAttribute("squareType", prevTypeStr);
             $(square).attr("src", "images/" + prevTypeStr + ".png");
