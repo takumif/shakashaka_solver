@@ -31,7 +31,7 @@ function getNextSquareType(current: Square): Square {
     if (next in Square) {
         return next;
     } else {
-        return 0;
+        return 7;// start from dot.
     }
 }
 
