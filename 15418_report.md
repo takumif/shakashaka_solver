@@ -89,7 +89,7 @@ So rather than performing work in its own queue, the worker will request a new b
 
 ##Results (final implementation)
 
-All tests are run on a Macbook Pro with a 2.7GHz dual-core Intel Core i5 processor. So there are 2 cores with 4 execution contexts on each machine. For each test, we timed the execution of the sequential and parallel functions separately, each time on a new opened browser.
+All tests are run on a Macbook Pro with a 2.7GHz dual-core Intel Core i5 processor. So there are 2 cores with 4 execution contexts on each machine. For each test, we timed the execution of the sequential and parallel functions separately, each time on a new opened browser. We spawned 10 threads more than the total execution contexts to attain some hyperthreading. 
 
 ###Sequential (one thread)
 
@@ -108,3 +108,9 @@ All tests are run on a Macbook Pro with a 2.7GHz dual-core Intel Core i5 process
 <img src="images/5by5par.png" alt="final" width="400px" height="300px">
 
 For the sample 4 by 4 board, we have achieved a speedup of roughly ~2.66  over the sequential version.
+For the sample 5 by 5 board, the speedup achieved was about ~4.5 over the sequential version.
+
+Depending on the initial board configurations, the speedup will vary since the size of the recursion tree will be different for each board. 
+
+A key thing to note here is the performance of this program is dependent of the number of threads running on your operating system. If there are too many running threads (Eg. you opened many tabs or another browser such as Chrome), the speedup of the program will be reduced. This is because many threads will increase the overhead over the CPU's finite execution resources. So it is recommended that it to run this program on a single browser with as little opened applications as possible. 
+
