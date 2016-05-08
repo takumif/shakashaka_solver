@@ -45,7 +45,7 @@ We use MDN web workers to achieve parallelism on the client side brower.
 
 (All code is written from scratch)
 
-![GitHub Logo](images/message_passing.png)
+![GitHub Logo](images/message_passing.png =600x700)
 
 Our initial sequential solver brute force tries every possible board configuration and uses isSolve() to verify every board. Obviously, this implementation is very slow and can only solve a 3 by 3 board within a reasonable amount of time. Before we can parallelize the solver, we need to shave down number of impossible to solve configurations so that the size of our recursion tree becomes smaller. Also mapping an impossible configuration to a thread on a core will result in wasted computation.
 
