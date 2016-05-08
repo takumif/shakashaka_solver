@@ -15,32 +15,32 @@ function _timer(callback) {
     var timer_id;    //    This is used by setInterval function
     
     this.start = function(interval) {
-        interval = (typeof(interval) !== 'undefined') ? interval : 1000;
-        if(status == 0){
-            status = 1;
-            timer_id = setInterval(function(){
-                if(time < 86400){
-                    time++;
-                    generateTime();
-                    if(typeof(callback) === 'function') callback(time);
-                }
-            }, interval);
-        }
+      interval = (typeof(interval) !== 'undefined') ? interval : 1000;
+      if(status == 0){
+        status = 1;
+        timer_id = setInterval(function(){
+            if(time < 86400){
+                time++;
+                generateTime();
+                if(typeof(callback) === 'function') callback(time);
+            }
+        }, interval);
+      }
     }
     
     this.stop = function(){
-        if(status == 1){
-            status = 0;
-            clearInterval(timer_id);
-        }
+      if(status == 1){
+          status = 0;
+          clearInterval(timer_id);
+      }
     }
     
     this.getTime = function(){
-        return time;
+      return time;
     }   
     
     this.getStatus = function(){
-        return status;
+      return status;
     }
 
     this.reset = function(sec) {
@@ -51,15 +51,15 @@ function _timer(callback) {
     
     // Format timer string.
     function generateTime() {
-            var second = time % 60;
-            var minute = Math.floor(time / 60) % 60;
-            var hour = Math.floor(time / 3600) % 60;       
-            var sec = (second < 10) ? '0'+second.toString() : second.toString();
-            var min = (minute < 10) ? '0'+minute.toString() : minute.toString();
-            var hr = (hour < 10) ? '0'+hour.toString() : hour.toString();      
-            $('div.timer span.second').html(sec);
-            $('div.timer span.minute').html(min);
-            $('div.timer span.hour').html(hr);
+      var second = time % 60;
+      var minute = Math.floor(time / 60) % 60;
+      var hour = Math.floor(time / 3600) % 60;       
+      var sec = (second < 10) ? '0'+second.toString() : second.toString();
+      var min = (minute < 10) ? '0'+minute.toString() : minute.toString();
+      var hr = (hour < 10) ? '0'+hour.toString() : hour.toString();      
+      $('div.timer span.second').html(sec);
+      $('div.timer span.minute').html(min);
+      $('div.timer span.hour').html(hr);
     }
 }
 
