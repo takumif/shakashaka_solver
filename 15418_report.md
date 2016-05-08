@@ -81,20 +81,36 @@ So instead, we put a main stack storing each board configuration in the main thr
 
 <img src="images/final_implementation.png" alt="final" width="500px" height="400px">
 
-
 The main thread initially assigns possible to solve boards to available worker threads. Then all other boards will put on the main thread's stack. Once the worker has completed checking a board, it will pop another board from the main stack and repeat the process (via message passing). 
 
 So rather than performing work in its own queue, the worker will request a new board whenever it finishes its task. 
 
 **NOTE**: although it may seem the workers seem to be contending for the top of the stack, it actually does not. This is because the individual workers have to send a message to the main thread (parallel worker) in which the main thread distributes the work in a sequential manner. Thus no locking is required to ensure the correctness of the program. 
 
-##Results
+##Results (final implementation)
 
+All tests are run on a Macbook Pro with a 2.7GHz dual-core Intel Core i5 processor. So there are 2 cores with 4 execution contexts on each machine. For each test, we timed the execution of the sequential and parallel functions separately, each time on a new opened browser. We spawned 10 threads more than the total execution contexts to attain some hyperthreading. 
 
+###Sequential (one thread)
 
+<img src="images/4by4seq.png" alt="final" width="400px" height="300px">
 
+###Parallel (ten threads)
 
+<img src="images/4by4par.png" alt="final" width="400px" height="300px">
 
+###Sequential (one thread)
 
+<img src="images/5by5Seq.png" alt="final" width="400px" height="300px">
 
+###Parallel (ten threads)
+
+<img src="images/5by5par.png" alt="final" width="400px" height="300px">
+
+For the sample 4 by 4 board, we have achieved a speedup of roughly ~2.66  over the sequential version.
+For the sample 5 by 5 board, the speedup achieved was about ~4.5 over the sequential version.
+
+Depending on the initial board configurations, the speedup will vary since the size of the recursion tree will be different for each board. 
+
+A key thing to note here is the performance of this program is dependent of the number of threads running on your operating system. If there are too many running threads (Eg. you opened many tabs or another browser such as Chrome), the speedup of the program will be reduced. This is because many threads will increase the overhead over the CPU's finite execution resources. So it is recommended that it to run this program on a single browser with as little opened applications as possible. 
 
