@@ -245,10 +245,10 @@ function blackSquareWithInvalidTriangle(row:number, col:number, board:Square[][]
     var topCell = -1;
     var bottomCell = -1;
     // All types surrounding cell.
-    if (col >= 0) leftCell = board[row][col - 1];
-    if (col < numCols) rightCell = board[row][col + 1];
-    if (row - 1 >= 0) topCell = board[row - 1][col];
-    if (row + 1 < numRows) bottomCell = board[row + 1][col]; 
+    if ((col - 1) >= 0) leftCell = board[row][col - 1];
+    if ((col + 1) < numCols) rightCell = board[row][col + 1];
+    if ((row - 1) >= 0) topCell = board[row - 1][col];
+    if ((row + 1) < numRows) bottomCell = board[row + 1][col]; 
     if ((leftCell != -1) && (leftCell == Square.TriTL || leftCell == Square.TriBL)) return false;     
     if ((rightCell != -1) && (rightCell == Square.TriTR || rightCell == Square.TriBR)) return false;     
     if ((topCell != -1) && (topCell == Square.TriTL || topCell == Square.TriTR)) return false;     
