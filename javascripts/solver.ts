@@ -61,23 +61,23 @@ function isSolved(board: Square[][]): boolean {
                 var BR = board[row + 1][col + 1];
                 var subBoard = [TL, TR, BR, BL];      
                 if (!validBlock(subBoard, false)){
-                    //console.log("validBlock");
+                    console.log("validBlock");
                     return false;
                 }
                 if (!checkSide(subBoard, numRows, numCols, row, col, isValidAngle)){
-                    //console.log("checkSide");
+                    console.log("checkSide");
                     return false;
                 }
             }
             if (checkBlackSquare(row, col, board) == false){
-                //console.log("checkBlackSquare");
+                console.log("checkBlackSquare");
                 return false;
             }                   
         }
     }  
     if (checkCorners(board) == false) return false;
     return true;
-} /**/
+} 
 
 function validBlock(cellTypes:Square[], flag:boolean):boolean {
     var subTriangles = [];
@@ -150,24 +150,34 @@ function checkBlackSquare(row:number, col:number, board:Square[][]):boolean {
     var bottomCell = -1;
     var counter = 0;    
     // All types surrounding cell.
-    if (col >= 0) leftCell = board[row][col - 1];
-    if (col < numCols) rightCell = board[row][col + 1];
-    if (row - 1 >= 0) topCell = board[row - 1][col];
-    if (row + 1 < numRows) bottomCell = board[row + 1][col];            
+    if ((col - 1) >= 0) leftCell = board[row][col - 1];
+    if ((col + 1) < numCols) rightCell = board[row][col + 1];
+    if ((row - 1) >= 0) topCell = board[row - 1][col];
+    if ((row + 1) < numRows) bottomCell = board[row + 1][col];  
+    
+    //console.log("surrounding types : " + leftCell + ", " + rightCell + ", " + topCell + ", " + bottomCell + " ");
+              
     // Now check up to 4 adjacent cells for black triangles.
     if ((leftCell != -1) && (leftCell == Square.TriTR || leftCell == Square.TriBR)){
+        //console.log("left");
         counter += 1;
     }
     if ((rightCell != -1) && (rightCell == Square.TriBL || rightCell == Square.TriTL)){
+        //console.log("right");
         counter += 1;
     }
-    if ((topCell != -1) && (topCell == Square.TriBL || leftCell == Square.TriBR)){
+    if ((topCell != -1) && (topCell == Square.TriBL || topCell == Square.TriBR)){
+        //console.log("top");
         counter += 1;
     }   
     if ((bottomCell != -1) && (bottomCell == Square.TriTL || bottomCell == Square.TriTR)){
+        //console.log("bottom");
         counter += 1;
     }      
     if (counter != reqTriangles){
+        // console.log("req tri: " + reqTriangles);
+        // console.log("counter: " + counter);
+        // console.log("check black " + type + ": " + row + ", " + col);
         return false;
     }       
     return true;
