@@ -90,11 +90,20 @@ So rather than performing work in its own queue, the worker will request a new b
 
 ##Results
 
+###Sequential (one thread)
 
+<img src="images/4by4seq.png" alt="final" width="400px" height="300px">
 
+###Parallel (ten threads)
 
+<img src="images/4by4par.png" alt="final" width="400px" height="300px">
 
+###Sequential (one thread)
 
+<img src="images/5by5Seq.png" alt="final" width="400px" height="300px">
 
+###Parallel (ten threads)
+
+<img src="images/5by5par.png" alt="final" width="400px" height="300px">
 
 
