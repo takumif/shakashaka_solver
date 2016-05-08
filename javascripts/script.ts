@@ -63,6 +63,8 @@ function _timer(callback) {
     }
 }
 
+
+
 $(() => {
 
     var boards:Square[][][] = [  
@@ -77,6 +79,18 @@ $(() => {
     var whichBoard;
     // Initial board.
     board = [[1,1,1,1,1],[1,1,1,1,1],[1,1,1,1,1],[1,1,1,1,1],[1,1,1,1,1]];
+
+   // board = partialBoard_1;
+
+    function fetchPartialBoard(board_id): Square[][]{
+      if (board_id == 0){
+        return partialBoard_1;
+      } else if (board_id == 1){
+        return partialBoard_2;
+      } else{
+        return boards[2];
+      }
+    } 
     
     drawBoard(board, $(".board"));  
     $("#display_time > p").text("");
@@ -111,17 +125,7 @@ $(() => {
     $("#run_par_solver").on("click", function(evt){
       evt.preventDefault(); // Prevent browser from refreshing on click.
       var start = new Date().getTime();
-      var solver = new ParallelSolver();
-      
-      function fetchPartialBoard(board_id): Square[][]{
-        if (board_id == 0){
-          return partialBoard_1;
-        } else if (board_id == 1){
-          return partialBoard_2;
-        } else{
-          return boards[2];
-        }
-      }      
+      var solver = new ParallelSolver();     
       var tmpBoard = fetchPartialBoard(whichBoard); // Fetch current board.
       var outputBoard = solver.parSolve(tmpBoard, function(result){
         drawBoard(result, $(".board"));
@@ -137,7 +141,8 @@ $(() => {
       evt.preventDefault(); 
       var worker = new ParallelWorker();      
       var start = new Date().getTime();
-      worker.submitWork(board, function(result){
+      var tmpBoard = fetchPartialBoard(whichBoard); // Fetch current board.
+      worker.submitWork(tmpBoard, function(result){
         var end = new Date().getTime();
         var time = (end - start)/1000.0;
         console.log("Time taken (seconds) = " + time);    
@@ -151,6 +156,8 @@ $(() => {
       evt.preventDefault(); 
       drawBoard(board, $(".board"));
       $("#display_time > p").text("");
+      timer.reset();
+      bindSquares();              
     });
       
 });
