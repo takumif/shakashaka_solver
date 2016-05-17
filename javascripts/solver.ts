@@ -141,7 +141,8 @@ function checkBlackSquare(row:number, col:number, board:Square[][]):boolean {
     if (type >= Square.Dot || type <= 1 || type <= Square.Black){
         return true; // Do not return any value. No check - no error.
     }
-    var reqTriangles = blackSqNum(type);
+    //var reqTriangles = blackSqNum(type);
+    var reqTriangles = getNumberOnSquare(type);
     var leftCell = -1;
     var rightCell = -1;
     var topCell = -1;
@@ -152,30 +153,21 @@ function checkBlackSquare(row:number, col:number, board:Square[][]):boolean {
     if ((col + 1) < numCols) rightCell = board[row][col + 1];
     if ((row - 1) >= 0) topCell = board[row - 1][col];
     if ((row + 1) < numRows) bottomCell = board[row + 1][col];  
-    
-    //console.log("surrounding types : " + leftCell + ", " + rightCell + ", " + topCell + ", " + bottomCell + " ");
-              
+                  
     // Now check up to 4 adjacent cells for black triangles.
     if ((leftCell != -1) && (leftCell == Square.TriTR || leftCell == Square.TriBR)){
-        //console.log("left");
         counter += 1;
     }
     if ((rightCell != -1) && (rightCell == Square.TriBL || rightCell == Square.TriTL)){
-        //console.log("right");
         counter += 1;
     }
     if ((topCell != -1) && (topCell == Square.TriBL || topCell == Square.TriBR)){
-        //console.log("top");
         counter += 1;
     }   
     if ((bottomCell != -1) && (bottomCell == Square.TriTL || bottomCell == Square.TriTR)){
-        //console.log("bottom");
         counter += 1;
     }      
     if (counter != reqTriangles){
-        // console.log("req tri: " + reqTriangles);
-        // console.log("counter: " + counter);
-        // console.log("check black " + type + ": " + row + ", " + col);
         return false;
     }       
     return true;
@@ -276,28 +268,6 @@ function isValidAngle(angle:number): boolean{
         return false;
     }    
     return true;
-}
-
-function blackSqNum(cell:Square): number{
-    var reqTriangles = 0;  
-    switch (cell){
-        case Square.Black0:
-            reqTriangles = 0;    
-            break;
-        case Square.Black1:
-            reqTriangles = 1;    
-            break; 
-        case Square.Black2:
-            reqTriangles = 2;    
-            break;
-        case Square.Black3:
-            reqTriangles = 3;    
-            break;
-        case Square.Black4:
-            reqTriangles = 4;    
-            break;                                           
-    }
-    return reqTriangles;
 }
 
 function checkBottomSide(cell1:number, cell2:number, checkAngle:(arg:number)=>boolean):boolean {
